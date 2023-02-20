@@ -1,3 +1,4 @@
+create database contestdb;
 use contestdb;
 
 CREATE TABLE sponsor (
@@ -5,6 +6,7 @@ CREATE TABLE sponsor (
   company_name varchar(100),
   email varchar(30),
   address varchar(100),
+  password varchar(30),
   PRIMARY KEY (sponsor_id)
 );
 
@@ -25,6 +27,7 @@ CREATE TABLE contest (
 CREATE TABLE contestant (
   contestant_id varchar(42),
   reward_balance float,
+  password varchar(30),
   PRIMARY KEY (contestant_id)
 );
 
@@ -40,6 +43,7 @@ CREATE TABLE participate (
 CREATE TABLE judge (
   judge_id varchar(42) NOT NULL,
   reward_balance float,
+  password varchar(30),
   PRIMARY KEY (judge_id)
 );
 
@@ -75,44 +79,52 @@ CREATE TABLE review(
     foreign key (sponsor_id) references sponsor (sponsor_id)
 );
 
--- create the table used for trigger
-CREATE TABLE stop_action (
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(35),
-    primary key (id),
-    UNIQUE KEY (id, name)
+create table admin(
+	name varchar(20),
+    password varchar(30),
+    primary key (name)
 );
-INSERT INTO stop_action values (1, 'Assert Failure');
 
-DELIMITER $$
-CREATE TRIGGER assert_judges_count_after_insert
-    BEFORE INSERT
-    ON judgeby FOR EACH ROW
-	BEGIN
-        declare number int;
-        select count(*) into number
-		from contest, judgeby
-		where contest.contest_id = judgeby.contest_id;
-        
-        if number < 5 or number > 10 then
-			INSERT INTO stop_action values (1, 'Assert Failure');
-		end if;
-	END$$    
-DELIMITER ;
+insert into admin values ('root', 'pass1234');
 
-DELIMITER $$
-CREATE TRIGGER assert_judges_count_after_update
-    BEFORE UPDATE
-    ON judgeby FOR EACH ROW
-	BEGIN
-        declare number int;
-        select count(*) into number
-		from contest, judgeby
-		where contest.contest_id = judgeby.contest_id;
-        
-        if number < 5 or number > 10 then
-			INSERT INTO stop_action values (1, 'Assert Failure');
-		end if;
-	END$$    
-DELIMITER ;
+-- create the table used for trigger
+-- CREATE TABLE stop_action (
+--     id INT NOT NULL AUTO_INCREMENT,
+--     name VARCHAR(35),
+--     primary key (id),
+--     UNIQUE KEY (id, name)
+-- );
+-- INSERT INTO stop_action values (1, 'Assert Failure');
+
+-- DELIMITER $$
+-- CREATE TRIGGER assert_judges_count_after_insert
+--     BEFORE INSERT
+--     ON judgeby FOR EACH ROW
+-- 	BEGIN
+--         declare number int;
+--         select count(*) into number
+-- 		from contest, judgeby
+-- 		where contest.contest_id = judgeby.contest_id;
+--         
+--         if number < 5 or number > 10 then
+-- 			INSERT INTO stop_action values (1, 'Assert Failure');
+-- 		end if;
+-- 	END$$    
+-- DELIMITER ;
+
+-- DELIMITER $$
+-- CREATE TRIGGER assert_judges_count_after_update
+--     BEFORE UPDATE
+--     ON judgeby FOR EACH ROW
+-- 	BEGIN
+--         declare number int;
+--         select count(*) into number
+-- 		from contest, judgeby
+-- 		where contest.contest_id = judgeby.contest_id;
+--         
+--         if number < 5 or number > 10 then
+-- 			INSERT INTO stop_action values (1, 'Assert Failure');
+-- 		end if;
+-- 	END$$    
+-- DELIMITER ;
 
