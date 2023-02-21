@@ -75,18 +75,18 @@ public class ControlServlet extends HttpServlet {
 	    	}
 	    }
         	
-	    private void listUser(HttpServletRequest request, HttpServletResponse response)
-	            throws SQLException, IOException, ServletException {
-	        System.out.println("listUser started: 00000000000000000000000000000000000");
-
-	     
-	        List<user> listUser = userDAO.listAllUsers();
-	        request.setAttribute("listUser", listUser);       
-	        RequestDispatcher dispatcher = request.getRequestDispatcher("UserList.jsp");       
-	        dispatcher.forward(request, response);
-	     
-	        System.out.println("listPeople finished: 111111111111111111111111111111111111");
-	    }
+//	    private void listUser(HttpServletRequest request, HttpServletResponse response)
+//	            throws SQLException, IOException, ServletException {
+//	        System.out.println("listUser started: 00000000000000000000000000000000000");
+//
+//	     
+//	        List<user> listUser = userDAO.listAllUsers();
+//	        request.setAttribute("listUser", listUser);       
+//	        RequestDispatcher dispatcher = request.getRequestDispatcher("UserList.jsp");       
+//	        dispatcher.forward(request, response);
+//	     
+//	        System.out.println("listPeople finished: 111111111111111111111111111111111111");
+//	    }
 	    	        
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
 	    	System.out.println("root view");
@@ -154,8 +154,8 @@ public class ControlServlet extends HttpServlet {
 	   	 	String wallet_address = request.getParameter("walletAddress");
 	   	 	String password = request.getParameter("password");
 	   	 	String role = request.getParameter("role");
-	   	 	
-	   	 	if (!userDAO.checkWalletAddress(wallet_address)) {
+	   	 	System.out.print(role);
+	   	 	if (userDAO.checkWalletAddress(wallet_address, role)) {
 	   	 		if (role.equals("sponsor")) {
 	   	 			sponsor sponsors = new sponsor(wallet_address, "", "", "", password);
 	   	 			userDAO.insert(sponsors, "sponsor");
