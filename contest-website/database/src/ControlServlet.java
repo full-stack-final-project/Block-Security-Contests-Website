@@ -174,7 +174,7 @@ public class ControlServlet extends HttpServlet {
 	    }    
 	    private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    	currentUser = "";
-        		response.sendRedirect("login.jsp");
+        		response.sendRedirect("index.jsp");
         	}
 	
 	    

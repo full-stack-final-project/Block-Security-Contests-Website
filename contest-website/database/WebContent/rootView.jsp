@@ -15,7 +15,7 @@
 	<form action = "initialize">
 		<input type = "submit" value = "Initialize the Database"/>
 	</form>
-	<a href="login.jsp"target ="_self" > logout</a><br><br> 
+	<a href="index.jsp"target ="_self" > logout</a><br><br> 
 
 <%-- <h1>List all users</h1>
     <div align="center">
