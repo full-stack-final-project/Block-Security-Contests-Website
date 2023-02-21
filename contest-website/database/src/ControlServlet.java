@@ -89,8 +89,8 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    	        
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
-	    	request.setAttribute("resStr","You just initialized the database. You can review the whole database through Workbench now");
-	   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+//	    	request.setAttribute("resStr","You just initialized the database. You can review the whole database through Workbench now");
+	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    }
 	    
 	    
@@ -100,8 +100,8 @@ public class ControlServlet extends HttpServlet {
 	    	 String role = request.getParameter("role");
 	    	 
 	    	 if (wallet_address.equals("root") && password.equals("pass1234")) {
-	    		 request.setAttribute("resStr","Logging in successfully as the root user");
-		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+//	    		 request.setAttribute("resStr","Logging in successfully as the root user");
+		   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    	 }
 	    	 else if (role.equals("sponsor") && userDAO.isValid(wallet_address, password, role)) {
 	    		 request.setAttribute("resStr","Logging in successfully as the sponsor user");

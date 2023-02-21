@@ -17,7 +17,7 @@
 	</form>
 	<a href="login.jsp"target ="_self" > logout</a><br><br> 
 
-<h1>List all users</h1>
+<%-- <h1>List all users</h1>
     <div align="center">
         <table border="1" cellpadding="6">
             <caption><h2>List of Users</h2></caption>
@@ -44,7 +44,7 @@
             </c:forEach>
         </table>
 	</div>
-	</div>
+	</div> --%>
 
 </body>
 </html>
