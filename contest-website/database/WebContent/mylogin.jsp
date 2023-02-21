@@ -105,7 +105,7 @@
 </head>
 <body>
 	<div class="container">
-		<h1>Sign Up</h1>
+		<h1>Login in</h1>
 		<form action="login" method="post">
 		<label>Role:</label>
 			<input type="radio" id="sponsor" name="role" value="sponsor" required onkeyup="checkForm()">
