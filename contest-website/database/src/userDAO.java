@@ -52,7 +52,7 @@ public class userDAO
     
     public boolean database_login(String email, String password) throws SQLException{
     	try {
-    		connect_func("root","root");
+    		connect_func("root","pass1234");
     		String sql = "select * from user where email = ?";
     		preparedStatement = connect.prepareStatement(sql);
     		preparedStatement.setString(1, email);
@@ -116,7 +116,7 @@ public class userDAO
     }
     
     public void insert(user users) throws SQLException {
-    	connect_func("root","root");         
+    	connect_func("root","pass1234");         
 		String sql = "insert into User(email, firstName, lastName, password, birthday,adress_street_num, adress_street,adress_city,adress_state,adress_zip_code,cash_bal,PPS_bal) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 			preparedStatement.setString(1, users.getEmail());
@@ -288,7 +288,7 @@ public class userDAO
 					            "PRIMARY KEY (email) "+"); ")
         					};
         String[] TUPLES = {("insert into User(email, firstName, lastName, password, birthday, adress_street_num, adress_street, adress_city, adress_state, adress_zip_code, cash_bal, PPS_bal)"+
-        			"values ('susie@gmail.com', 'Susie ', 'G', 'susie1234', '2000-06-27', '1234', 'whatever street', 'detroit', 'MI', '48202','1000', '0'),"+
+        			"values ('susie@gmail.com', 'Susie ', 'Guzman', 'susie1234', '2000-06-27', '1234', 'whatever street', 'detroit', 'MI', '48202','1000', '0'),"+
 			    		 	"('don@gmail.com', 'Don', 'Cummings','don123', '1969-03-20', '1000', 'hi street', 'mama', 'MO', '12345','1000', '0'),"+
 			    	 	 	"('margarita@gmail.com', 'Margarita', 'Lawson','margarita1234', '1980-02-02', '1234', 'ivan street', 'tata','CO','12561','1000', '0'),"+
 			    		 	"('jo@gmail.com', 'Jo', 'Brady','jo1234', '2002-02-02', '3214','marko street', 'brat', 'DU', '54321','1000', '0'),"+
@@ -298,7 +298,7 @@ public class userDAO
 			    			"('angelo@gmail.com', 'Angelo', 'Francis','angelo1234', '2021-06-14', '4680', 'egypt street', 'lolas', 'DT', '13579','1000', '0'),"+
 			    			"('rudy@gmail.com', 'Rudy', 'Smith','rudy1234', '1706-06-05', '1234', 'sign street', 'samo ne tu','MH', '09876','1000', '0'),"+
 			    			"('jeannette@gmail.com', 'Jeannette ', 'Stone','jeannette1234', '2001-04-24', '0981', 'snoop street', 'kojik', 'HW', '87654','1000', '0'),"+
-			    			"('root', 'default', 'default','pass1234', '2020-02-02', '0000', 'Default', 'Default', '0', '00000','1000','1000000000');")
+			    			"('root', 'default', 'default','pass1234', '2000-12-12', '0000', 'Default', 'Default', '0', '00000','1000','1000000000');")
 			    			};
         
         //for loop to put these in database
