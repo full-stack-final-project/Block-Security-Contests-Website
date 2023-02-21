@@ -108,13 +108,13 @@
 		<h1>Login in</h1>
 		<form action="login" method="post">
 		<label>Role:</label>
-			<input type="radio" id="sponsor" name="role" value="sponsor" required onkeyup="checkForm()">
+			<input type="radio" id="sponsor" name="role" value="sponsor" required >
 			<label for="sponsor">Sponsor</label>
-			<input type="radio" id="judge" name="role" value="judge" onkeyup="checkForm()">
+			<input type="radio" id="judge" name="role" value="judge" >
 			<label for="judge">Judge</label>
-			<input type="radio" id="contestant" name="role" value="contestant" onkeyup="checkForm()">
+			<input type="radio" id="contestant" name="role" value="contestant" >
 			<label for="contestant">Contestant</label>
-			<input type="radio" id="root" name="role" value="root" onkeyup="checkForm()">
+			<input type="radio" id="root" name="role" value="root" >
 			<label for="root">Root</label><br><br>
 			
 			<label for="walletAddress">Wallet Address:</label>
