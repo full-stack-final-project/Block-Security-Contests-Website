@@ -115,7 +115,7 @@ public class userDAO
         }
     }
     
-    public void insert(user users) throws SQLException {
+    public void insert(user users, String role) throws SQLException {
     	connect_func("root","pass1234");         
 		String sql = "insert into User(email, firstName, lastName, password, birthday,adress_street_num, adress_street,adress_city,adress_state,adress_zip_code,cash_bal,PPS_bal) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
@@ -202,7 +202,9 @@ public class userDAO
          
         return user;
     }
-    
+    public boolean checkWalletAddress(String wallet_address) throws SQLException {
+    	return true;
+    }
     public boolean checkEmail(String email) throws SQLException {
     	boolean checks = false;
     	String sql = "SELECT * FROM User WHERE email = ?";

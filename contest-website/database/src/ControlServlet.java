@@ -120,36 +120,27 @@ public class ControlServlet extends HttpServlet {
 	    }
 	           
 	    private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-	    	String email = request.getParameter("email");
-	   	 	String firstName = request.getParameter("firstName");
-	   	 	String lastName = request.getParameter("lastName");
+	    	
+	   	 	String wallet_address = request.getParameter("walletAddress");
 	   	 	String password = request.getParameter("password");
-	   	 	String birthday = request.getParameter("birthday");
-	   	 	String adress_street_num = request.getParameter("adress_street_num"); 
-	   	 	String adress_street = request.getParameter("adress_street"); 
-	   	 	String adress_city = request.getParameter("adress_city"); 
-	   	 	String adress_state = request.getParameter("adress_state"); 
-	   	 	String adress_zip_code = request.getParameter("adress_zip_code"); 	   	 	
-	   	 	String confirm = request.getParameter("confirmation");
+	   	 	String role = request.getParameter("role");
 	   	 	
-	   	 	if (password.equals(confirm)) {
-	   	 		if (!userDAO.checkEmail(email)) {
-		   	 		System.out.println("Registration Successful! Added to database");
-		            user users = new user(email,firstName, lastName, password, birthday, adress_street_num,  adress_street,  adress_city,  adress_state,  adress_zip_code, 1000,0);
-		   	 		userDAO.insert(users);
-		   	 		response.sendRedirect("login.jsp");
+	   	 	if (!userDAO.checkWalletAddress(wallet_address)) {
+	   	 		if (role.equals("sponsor")) {
+	   	 			sponsor sponsors = new sponsor(wallet_address, "", "", "", password);
+	   	 			userDAO.insert(sponsors, "sponsor");
 	   	 		}
-		   	 	else {
-		   	 		System.out.println("Username taken, please enter new username");
-		    		 request.setAttribute("errorOne","Registration failed: Username taken, please enter a new username.");
-		    		 request.getRequestDispatcher("register.jsp").forward(request, response);
-		   	 	}
+	   	 		if (role.equals("judge")) {
+	   	 			judge judges = new judge(wallet_address, password, 0);
+	   	 			userDAO.insert(judges, "judge");
+	   	 		}
+	   	 		if (role.equals("contestant")) {
+	   	 			contestant contestants = new contestant(wallet_address, password, 0);
+	   	 			userDAO.insert(contestants, "contestant");
+	   	 		}	
+	   	 		
 	   	 	}
-	   	 	else {
-	   	 		System.out.println("Password and Password Confirmation do not match");
-	   		 request.setAttribute("errorTwo","Registration failed: Password and Password Confirmation do not match.");
-	   		 request.getRequestDispatcher("register.jsp").forward(request, response);
-	   	 	}
+	   	 	
 	    }    
 	    private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    	currentUser = "";
