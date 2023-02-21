@@ -50,7 +50,7 @@ public class ControlServlet extends HttpServlet {
         	case "/login":
         		login(request,response);
         		break;
-        	case "/register":
+        	case "/signup":
         		register(request, response);
         		break;
         	case "/initialize":
@@ -96,27 +96,57 @@ public class ControlServlet extends HttpServlet {
 	    
 	    
 	    protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-	    	 String email = request.getParameter("email");
+	    	 String wallet_address = request.getParameter("walletAddress");
 	    	 String password = request.getParameter("password");
+	    	 String role = request.getParameter("role");
 	    	 
-	    	 if (email.equals("root") && password.equals("pass1234")) {
-				 System.out.println("Login Successful! Redirecting to root");
-				 session = request.getSession();
-				 session.setAttribute("username", email);
-				 rootPage(request, response, "");
+	    	 if (wallet_address.equals("root") && password.equals("pass1234")) {
+	    		 request.setAttribute("resStr","Logging in successfully as the root user");
+		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
 	    	 }
-	    	 else if(userDAO.isValid(email, password)) 
-	    	 {
-			 	 
-			 	 currentUser = email;
-				 System.out.println("Login Successful! Redirecting");
-				 request.getRequestDispatcher("activitypage.jsp").forward(request, response);
-			 			 			 			 
+	    	 else if (role.equals("sponsor") && userDAO.isValid(wallet_address, password, role)) {
+	    		 request.setAttribute("resStr","Logging in successfully as the sponsor user");
+		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+	    		 
+	    	 }
+	    	 
+	    	 else if (role.equals("contestant") && userDAO.isValid(wallet_address, password, role)) {
+	    		 request.setAttribute("resStr","Logging in successfully as the contestant user");
+		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+	    		 
+	    	 }
+	    	 
+	    	 else if (role.equals("judge") && userDAO.isValid(wallet_address, password, role)) {
+	    		 request.setAttribute("resStr","Logging in successfully as the judge user");
+		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+	    		 
 	    	 }
 	    	 else {
-	    		 request.setAttribute("loginStr","Login Failed: Please check your credentials.");
-	    		 request.getRequestDispatcher("login.jsp").forward(request, response);
+	    		 request.setAttribute("resStr","Not able to log you in. please check if you putted role, wallet addreess or password right");
+		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
 	    	 }
+	    	
+//	    	 String email = request.getParameter("email");
+//	    	 String password = request.getParameter("password");
+//	    	 
+//	    	 if (email.equals("root") && password.equals("pass1234")) {
+//				 System.out.println("Login Successful! Redirecting to root");
+//				 session = request.getSession();
+//				 session.setAttribute("username", email);
+//				 rootPage(request, response, "");
+//	    	 }
+//	    	 else if(userDAO.isValid(email, password)) 
+//	    	 {
+//			 	 
+//			 	 currentUser = email;
+//				 System.out.println("Login Successful! Redirecting");
+//				 request.getRequestDispatcher("activitypage.jsp").forward(request, response);
+//			 			 			 			 
+//	    	 }
+//	    	 else {
+//	    		 request.setAttribute("loginStr","Login Failed: Please check your credentials.");
+//	    		 request.getRequestDispatcher("login.jsp").forward(request, response);
+//	    	 }
 	    }
 	           
 	    private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -138,7 +168,11 @@ public class ControlServlet extends HttpServlet {
 	   	 			contestant contestants = new contestant(wallet_address, password, 0);
 	   	 			userDAO.insert(contestants, "contestant");
 	   	 		}	
-	   	 		
+	   	 		request.setAttribute("resStr","Sign up successfully");
+	   	 		request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+	   	 	}else {
+	   	 		request.setAttribute("resStr","Please use another wallet address to sign up an account. Duplicated in our database");
+	   	 		request.getRequestDispatcher("tempRes.jsp").forward(request, response);
 	   	 	}
 	   	 	
 	    }    
