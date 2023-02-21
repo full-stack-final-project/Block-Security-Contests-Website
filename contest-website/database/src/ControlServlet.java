@@ -89,9 +89,8 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    	        
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
-	    	System.out.println("root view");
-			request.setAttribute("listUser", userDAO.listAllUsers());
-	    	request.getRequestDispatcher("rootView.jsp").forward(request, response);
+	    	request.setAttribute("resStr","You just initialized the database. You can review the whole database through Workbench now");
+	   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
 	    }
 	    
 	    
