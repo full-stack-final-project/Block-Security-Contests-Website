@@ -67,7 +67,7 @@
 		
 	</style>
 	<script type="text/javascript">
-		function checkWalletAddress() {
+		/* function checkWalletAddress() {
 			var walletAddress = document.getElementById("walletAddress").value;
 			if (walletAddress.length != 42) {
 				document.getElementById("walletError").innerHTML = "Wallet address must be exactly 42 characters.";
@@ -80,7 +80,7 @@
 				
 				
 			}
-		}
+		} */
 		document.querySelectorAll('input[type="radio"]').forEach((elem) => {
 			  elem.addEventListener('change', checkForm);
 			});
@@ -118,13 +118,13 @@
 			<label for="root">Root</label><br><br>
 			
 			<label for="walletAddress">Wallet Address:</label>
-			<input type="text" id="walletAddress" name="walletAddress" required maxlength="42" onkeyup="checkWalletAddress()">
+			<input type="text" id="walletAddress" name="walletAddress" required maxlength="42" >
 			<span id="walletError" class="error"></span><br><br>
 
 			<label for="password">Password:</label>
 			<input type="password" id="password" name="password" required ><br>
 			<span id="passwordError" class="error"></span><br>
-			<input type="submit" id="submitBtn" value="Submit" disabled>
+			<input type="submit" id="submitBtn" value="Submit" >
 		</form>
 	</div>
 </body>

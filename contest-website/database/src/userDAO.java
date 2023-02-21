@@ -243,9 +243,9 @@ public class userDAO
     
     
     
-    public boolean isValid(String email, String password) throws SQLException
+    public boolean isValid(String wallet_address, String password, String role) throws SQLException
     {
-    	String sql = "SELECT * FROM User";
+    	String sql = "SELECT * FROM " + role;
     	connect_func();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
@@ -258,7 +258,7 @@ public class userDAO
     	for(int i = 0; i < setSize; i++)
     	{
     		resultSet.next();
-    		if(resultSet.getString("email").equals(email) && resultSet.getString("password").equals(password)) {
+    		if(resultSet.getString(role + "_id").equals(wallet_address) && resultSet.getString("password").equals(password)) {
     			return true;
     		}		
     	}
