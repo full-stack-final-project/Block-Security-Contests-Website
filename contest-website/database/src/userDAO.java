@@ -115,7 +115,7 @@ public class userDAO
         }
     }
     
-    public void insert(user users) throws SQLException {
+    public void insert(user users, String role) throws SQLException {
     	connect_func("root","pass1234");         
 		String sql = "insert into " + role + "(" + role + "_id, password) values (?, ?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);

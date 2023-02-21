@@ -64,10 +64,7 @@ public class ControlServlet extends HttpServlet {
         	case "/logout":
         		logout(request,response);
         		break;
-        	 case "/list": 
-                 System.out.println("The action is: list");
-                 listUser(request, response);           	
-                 break;
+        	
 	    	}
 	    }
 	    catch(Exception ex) {
