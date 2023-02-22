@@ -13,7 +13,7 @@ Junhao Qiu
 
 Install Eclipse, Tomcat and config these two as Exercise 1.
 
-Import folder contest-website folder into Eclipse as a project.
+Import folder contest-website folder into Eclipse as a project. Change the user name and password for your databse in userDAO.java. Our database name is `contestdb`.
 
 Find database/WebContent and right click index.jsp to run on server. 
 
