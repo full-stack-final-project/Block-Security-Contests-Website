@@ -95,6 +95,7 @@ public class ControlServlet extends HttpServlet {
 	    
 	    protected void checkUserID(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	PrintWriter out = response.getWriter();
+	    	if (userDAO.checkUserID(currentUser, currentUser))
 	    	out.print("looks good");
 	    	out.flush();
 	    }
@@ -158,7 +159,6 @@ public class ControlServlet extends HttpServlet {
 	   	 	String wallet_address = request.getParameter("walletAddress");
 	   	 	String password = request.getParameter("password");
 	   	 	String role = request.getParameter("role");
-	   	 	System.out.print(role);
 	   	 	if (userDAO.checkWalletAddress(wallet_address, role)) {
 	   	 		if (role.equals("sponsor")) {
 	   	 			sponsor sponsors = new sponsor(wallet_address, "", "", "", password);

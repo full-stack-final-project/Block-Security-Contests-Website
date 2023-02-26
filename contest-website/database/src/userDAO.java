@@ -218,10 +218,31 @@ public class userDAO
         System.out.println(checks);	
         
         if (resultSet.next()) {
-        	checks = true;
+        	checks = false;
         }
 
         
+        System.out.println(checks);
+    	return checks;
+    	
+    }
+    
+    
+    public boolean checkUserID(String userID, String role) throws SQLException {
+    	boolean checks = true;
+    	String sql = "SELECT * From " + role + "  WHERE " +  role + "_id = ?";
+    	System.out.print(sql);
+    	connect_func();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+        preparedStatement.setString(1, userID);
+        System.out.print(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        
+        System.out.println(checks);	
+        
+        if (resultSet.next()) {
+        	checks = true;
+        }
         System.out.println(checks);
     	return checks;
     	
