@@ -11,6 +11,16 @@ def generate_wallet_address(length: int, count: int) -> set():
         result.add('0x' + generated_string)
     return result
 
+def generate_user_id(min_len, max_len, count: int) -> set():
+    seed = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    result = set()
+    lengths = [_ for _ in range(min_len, max_len + 1, 1)]
+    while len(result) != count:
+        picked_length = random.choice(lengths)
+        result.add(''.join((random.choice(seed)) for _ in range(picked_length)))
+    return result
+
+
 def generate_password(length: int, count: int) -> set():
     seed = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-*/!@#$%&'
     result = set()
@@ -56,6 +66,7 @@ def generate_time(count: int) -> set():
 
 if __name__ == '__main__':
     wallets = list(generate_wallet_address(40, 60))
+    user_ids = list(generate_user_id(min_len= 4, max_len=8, count=40))
     passwords = list(generate_password(4, 60))
     company_names = list(generate_company_name(20))
     emails = list(generate_email(20))
@@ -68,6 +79,10 @@ if __name__ == '__main__':
         file.write("Wallets: \n")
         for i in range(len(wallets)):
             file.write(wallets[i] + '\n')
+
+        file.write('\n\nIDs: \n')
+        for i in user_ids:
+            file.write(i + '\n')
 
         file.write("\n\nPasswords: \n")
         for i in range(len(passwords)):
@@ -96,9 +111,3 @@ if __name__ == '__main__':
         file.write("\n\nTimes: \n")
         for i in range(len(times)):
             file.write(times[i] + '\n')
-
-    
-            
-
-
-

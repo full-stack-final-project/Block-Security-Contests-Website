@@ -1,12 +1,16 @@
+drop database if exists contestdb;
 create database contestdb;
 use contestdb;
 
 CREATE TABLE sponsor (
   sponsor_id varchar(42),
+  login_id varchar(10),
+  unique (login_id),
   company_name varchar(100),
   email varchar(30),
   address varchar(100),
   password varchar(30),
+  balance bigint default 1000000,
   PRIMARY KEY (sponsor_id)
 );
 
@@ -18,7 +22,7 @@ CREATE TABLE contest (
   end_time datetime,
   status char(10) DEFAULT 'created',
   requirement_list text,
-  sponsor_fee int,
+  sponsor_fee bigint default 0,
   PRIMARY KEY (contest_id),
   FOREIGN KEY (sponsor_id) REFERENCES sponsor (sponsor_id),
   CHECK ((status in ('created', 'opened', 'closed', 'past')))
@@ -26,15 +30,17 @@ CREATE TABLE contest (
 
 CREATE TABLE contestant (
   contestant_id varchar(42),
-  reward_balance float,
+  login_id varchar(10),
+  reward_balance float default 0,
   password varchar(30),
+  unique (login_id),
   PRIMARY KEY (contestant_id)
 );
 
 CREATE TABLE participate (
   contestant_id varchar(42),
   contest_id varchar(42),
-  contestant_reward float,
+  contestant_reward float default 0,
   PRIMARY KEY (contestant_id,contest_id),
   FOREIGN KEY (contestant_id) REFERENCES contestant (contestant_id),
   FOREIGN KEY (contest_id) REFERENCES contest (contest_id)
@@ -42,7 +48,9 @@ CREATE TABLE participate (
 
 CREATE TABLE judge (
   judge_id varchar(42) NOT NULL,
-  reward_balance float,
+  login_id varchar(10),
+  unique (login_id),
+  reward_balance float default 0,
   password varchar(30),
   PRIMARY KEY (judge_id)
 );
@@ -51,7 +59,7 @@ create TABLE grade(
 	contest_id varchar(42),
     contestant_id varchar(42),
     judge_id varchar(42),
-    score integer,
+    score integer default 0,
     check (score >= 0 & score <= 100),
 	primary key (contest_id, contestant_id, judge_id),
     foreign key (contest_id) references contest (contest_id),
@@ -62,7 +70,7 @@ create TABLE grade(
 CREATE TABLE judgeby (
   contest_id varchar(42),
   judge_id varchar(42),
-  judge_reward float,
+  judge_reward float default 0,
   PRIMARY KEY (contest_id,judge_id),
   FOREIGN KEY (contest_id) REFERENCES contest (contest_id),
   FOREIGN KEY (judge_id) REFERENCES judge (judge_id)

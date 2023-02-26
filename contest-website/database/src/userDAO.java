@@ -297,10 +297,13 @@ public class userDAO
 					        "use contestdb; ",
 					        ("CREATE TABLE sponsor ( " +
 					        	"sponsor_id varchar(42)," +
+					        	"login_id varchar(10)," + 
+					        	"unique (login_id), " +
 					        	"company_name varchar(100)," +
 					        	"email varchar(30)," +
 					        	"address varchar(100), " +
 					        	"password varchar(30)," +
+					        	"balance bigint default 1000000, " +
 					        	"PRIMARY KEY (sponsor_id)" +
 					        	");"),
 					        
@@ -312,7 +315,7 @@ public class userDAO
 						        "end_time datetime," +
 						        "status char(10) DEFAULT 'created'," +
 						        "requirement_list text," +
-						        "sponsor_fee int, " +
+						        "sponsor_fee bigint default 0, " +
 						        "PRIMARY KEY (contest_id), " +
 						        "FOREIGN KEY (sponsor_id) REFERENCES sponsor (sponsor_id)," +
 						        "CHECK ((status in ('created', 'opened', 'closed', 'past')))" +
@@ -320,7 +323,9 @@ public class userDAO
 					        
 					        ("CREATE TABLE contestant ( " +
 						        "contestant_id varchar(42)," +
-						        "reward_balance float," +
+						        "login_id varchar(10)," + 
+					        	"unique (login_id), " +
+						        "reward_balance float default 0," +
 						        "password varchar(30)," +
 						        "PRIMARY KEY (contestant_id) " +
 						        ");"),
@@ -328,7 +333,7 @@ public class userDAO
 					        ("CREATE TABLE participate ( " +
 						        "contestant_id varchar(42), " +
 						        "contest_id varchar(42), " +
-						        "contestant_reward float, " +
+						        "contestant_reward float default 0, " +
 						        "PRIMARY KEY (contestant_id,contest_id), " +
 						        "FOREIGN KEY (contestant_id) REFERENCES contestant (contestant_id)," +
 						        "FOREIGN KEY (contest_id) REFERENCES contest (contest_id)" +
@@ -336,7 +341,9 @@ public class userDAO
 					        
 					        ("CREATE TABLE judge ( " +
 							    "judge_id varchar(42) NOT NULL," +
-							    "reward_balance float," +
+							    "login_id varchar(10)," + 
+					        	"unique (login_id), " +
+							    "reward_balance float default 0," +
 							    "password varchar(30)," +
 							    "PRIMARY KEY (judge_id) " +
 							    ");"),
@@ -356,7 +363,7 @@ public class userDAO
 					        ("CREATE TABLE judgeby ( " +
 							    "contest_id varchar(42), " +
 							    "judge_id varchar(42), " +
-							    "judge_reward float," +
+							    "judge_reward float default 0," +
 							    "PRIMARY KEY (contest_id,judge_id)," +
 							    "FOREIGN KEY (contest_id) REFERENCES contest (contest_id)," +
 							    "FOREIGN KEY (judge_id) REFERENCES judge (judge_id)" +
@@ -382,17 +389,17 @@ public class userDAO
         					};
         String[] TUPLES = {("INSERT INTO admin(name, password) values ('root', 'pass1234');"),
         		
-        		("insert into sponsor(sponsor_id, company_name, email, address, password) "+
-            			"values ('0x97947962D8E41604A639E45CF53ABF7D8908F3D2', 'Hill Ltd ', 'dpowell@example.org', '76642 Sara Island', '1111'),"+
-    			    		 	"('0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', 'Jacobs-Waters', 'sallybaker@example.org','West Laurenberg, GA 91052', '2222'),"+
-    			    	 	 	"('0xAE68D751D3F446DE82E721D710A39699D75ED4E6', 'Roberts Inc', 'duncancheryl@example.org','6614 Atkins Port Apt. 038', '3333'),"+
-    			    		 	"('0x852E70564680766F82DF05F73BE602C8C3365052', 'Foster Inc', 'emily72@example.com','Jonathanside, CO 22043', '4444'),"+
-    			    		 	"('0x5178CD3E65527138457B67B681984A4CAEFE3639', 'Woods, Winters and Duncan', 'william12@example.org','62948 Ashley Unions Apt. 579', '5555'),"+
-    			    		 	"('0x9DB671E5B81081ECB3B6BBB0B3BD6CF3DBC22FD9', 'Hinton Group', 'wtorres@example.net','Karaberg, WI 67321', '6666'),"+
-    			    			"('0x529F3FC6C7F7B7D02B4894DF3F2289E2D507851C', 'Rodriguez Inc', 'dvalenzuela@example.net','92335 Rivas Circles Apt. 345', '7777'),"+
-    			    			"('0x0CB12A11D9A621DEAC12FCC3175086E32A15034C', 'Rodriguez-Guerrero','riceallen@example.org', 'Port Johnfort, GA 54293', '8888'),"+
-    			    			"('0x8D07672797426DBA4F6E9CAC7D8CDC8DFA420C11', 'Johnson-Warren', 'morrisonkyle@example.net','160 Ward Forges', '9999'),"+
-    			    			"('0x360F3E8F837793A7E8F205EC58A3E0ADDE5C66AE', 'Johnson, Morse and Chandler ', 'david97@example.com','New Christopher, DE 18612', '0000');"),
+        		("insert into sponsor(sponsor_id, login_id, company_name, email, address, password) "+
+            			"values ('0x97947962D8E41604A639E45CF53ABF7D8908F3D2', 'vL7D', 'Hill Ltd ', 'dpowell@example.org', '76642 Sara Island', '1111'),"+
+    			    		 	"('0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', 'FFuUm64J', 'Jacobs-Waters', 'sallybaker@example.org','West Laurenberg, GA 91052', '2222'),"+
+    			    	 	 	"('0xAE68D751D3F446DE82E721D710A39699D75ED4E6', 'Y3WvlF', 'Roberts Inc', 'duncancheryl@example.org','6614 Atkins Port Apt. 038', '3333'),"+
+    			    		 	"('0x852E70564680766F82DF05F73BE602C8C3365052', 'osHB', 'Foster Inc', 'emily72@example.com','Jonathanside, CO 22043', '4444'),"+
+    			    		 	"('0x5178CD3E65527138457B67B681984A4CAEFE3639', 'aXhRd', 'Woods, Winters and Duncan', 'william12@example.org','62948 Ashley Unions Apt. 579', '5555'),"+
+    			    		 	"('0x9DB671E5B81081ECB3B6BBB0B3BD6CF3DBC22FD9', 'zcsi', 'Hinton Group', 'wtorres@example.net','Karaberg, WI 67321', '6666'),"+
+    			    			"('0x529F3FC6C7F7B7D02B4894DF3F2289E2D507851C', 'JFWHpFJl', 'Rodriguez Inc', 'dvalenzuela@example.net','92335 Rivas Circles Apt. 345', '7777'),"+
+    			    			"('0x0CB12A11D9A621DEAC12FCC3175086E32A15034C', 'IfGNZtt', 'Rodriguez-Guerrero','riceallen@example.org', 'Port Johnfort, GA 54293', '8888'),"+
+    			    			"('0x8D07672797426DBA4F6E9CAC7D8CDC8DFA420C11', '8NVQNmE', 'Johnson-Warren', 'morrisonkyle@example.net','160 Ward Forges', '9999'),"+
+    			    			"('0x360F3E8F837793A7E8F205EC58A3E0ADDE5C66AE', 'Q49zwPCC', 'Johnson, Morse and Chandler ', 'david97@example.com','New Christopher, DE 18612', '0000');"),
         		
         		("insert into contest(contest_id, sponsor_id, begin_time, end_time, status, requirement_list, sponsor_fee) "+
             			"values ('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2','1970-09-09 23:11:23', '1976-01-23 19:01:46', 'past', 'Executive serious challenge question. Instead money court city learn where. Common always key analysis show ball.', '10000'),"+
@@ -406,29 +413,29 @@ public class userDAO
     			    			"('0x9AE248CF24DB9E1A5DB95128230DB6880EE958AC', '0xAE68D751D3F446DE82E721D710A39699D75ED4E6', '1983-12-11 17:07:42', '1988-03-16 16:37:25', 'past', 'Discover professional deep music. Now coach data black yard apply.', '10000'),"+
     			    			"('0x45D4F7663EEE2246299620F1B6D69EB8C1675635', '0xAE68D751D3F446DE82E721D710A39699D75ED4E6', '2005-04-10 23:24:54', '2011-08-04 03:00:23', 'past', 'Building make be we mother. Mission now clearly but according Mr wait.', '10000');"),
         		
-        		("insert into contestant(contestant_id, reward_balance, password) "+
-            			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', '500', '1122'),"+
-    			    		 	"('0x35A85E2BAD55C300CE6275B15CAB8CA31D84C599', '500', '2211'),"+
-    			    	 	 	"('0xFCD3B620543DD7F60E242DF58682B868E85736AD', '1000', '1313'),"+
-    			    		 	"('0x680ABFEC8CB5FA2DAEC5C1390B5A215107A4B395', '2000', '1414'),"+
-    			    		 	"('0x07C753B5DC16CF9A08C0FB9E1ED2DF7BFF8D2183', '4000', '1515'),"+
-    			    		 	"('0x2E1F392C012084AFEE3488950F3EDB976BA58E24', '500', '1616'),"+
-    			    			"('0x803B1734224C73B9FFC5F08B5EF197695F002EF1', '500', '1717'),"+
-    			    			"('0x3CFBCB6D1980E895BFE47C09677A2D6D130CC7F4', '1000', '1818'),"+
-    			    			"('0x3F3568E46909FB7AAE17B1C31F7D2F334CF1C6E5', '2000', '1919'),"+
-    			    			"('0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', '4000', '1010');"),
+        		("insert into contestant(contestant_id, login_id, reward_balance, password) "+
+            			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', 'DJA8', '500', '1122'),"+
+    			    		 	"('0x35A85E2BAD55C300CE6275B15CAB8CA31D84C599', '5HpCn', '500', '2211'),"+
+    			    	 	 	"('0xFCD3B620543DD7F60E242DF58682B868E85736AD', 'W0Zq', '1000', '1313'),"+
+    			    		 	"('0x680ABFEC8CB5FA2DAEC5C1390B5A215107A4B395', 'WbGY', '2000', '1414'),"+
+    			    		 	"('0x07C753B5DC16CF9A08C0FB9E1ED2DF7BFF8D2183', 'wuWk2', '4000', '1515'),"+
+    			    		 	"('0x2E1F392C012084AFEE3488950F3EDB976BA58E24', 'qjgA', '500', '1616'),"+
+    			    			"('0x803B1734224C73B9FFC5F08B5EF197695F002EF1', 'zH9TjKF', '500', '1717'),"+
+    			    			"('0x3CFBCB6D1980E895BFE47C09677A2D6D130CC7F4', 'b27AQ54y', '1000', '1818'),"+
+    			    			"('0x3F3568E46909FB7AAE17B1C31F7D2F334CF1C6E5', 'eVtMDD5u', '2000', '1919'),"+
+    			    			"('0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', 'i1AiG', '4000', '1010');"),
         		
-        		("insert into judge(judge_id, reward_balance, password) "+
-            			"values ('0x7028B6789BBEE245564032790282FD27B8042476', '400', '1231'),"+
-    			    		 	"('0x4967CFB5FC27C098230CFE8B8985234D91D52886', '400', '1232'),"+
-    			    	 	 	"('0xA115319467FB68EDD5DA513152B1158A2EF14CBF', '400', '1233'),"+
-    			    		 	"('0xA542FE379E6E11749D19F1AB9514E0202D6E64AC', '400', '1234'),"+
-    			    		 	"('0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB', '400', '1235'),"+
-    			    		 	"('0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C', '400', '1236'),"+
-    			    			"('0x987263D76E9C6674D9330A3B6F1A3E6FB4801691', '400', '1237'),"+
-    			    			"('0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8', '400', '1238'),"+
-    			    			"('0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83', '400', '1239'),"+
-    			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', '400', '1230');"),
+        		("insert into judge(judge_id, login_id, reward_balance, password) "+
+            			"values ('0x7028B6789BBEE245564032790282FD27B8042476', 'UPnNuu', '400', '1231'),"+
+    			    		 	"('0x4967CFB5FC27C098230CFE8B8985234D91D52886', 'r6vPbtH', '400', '1232'),"+
+    			    	 	 	"('0xA115319467FB68EDD5DA513152B1158A2EF14CBF', '8uSPO2x', '400', '1233'),"+
+    			    		 	"('0xA542FE379E6E11749D19F1AB9514E0202D6E64AC', 'ckoC4v2', '400', '1234'),"+
+    			    		 	"('0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB', 'Q1Mbbjz', '400', '1235'),"+
+    			    		 	"('0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C', 'nGv5', '400', '1236'),"+
+    			    			"('0x987263D76E9C6674D9330A3B6F1A3E6FB4801691', 'AmKrgjq0', '400', '1237'),"+
+    			    			"('0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8', '7L9is', '400', '1238'),"+
+    			    			"('0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83', 'aC2BS', '400', '1239'),"+
+    			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', 'VCjLuqf', '400', '1230');"),
         		
         		("insert into participate(contestant_id, contest_id, contestant_reward) "+
             			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', '0x8A3A72C9692503153B9AE06852BE307CA3BEE18F', '500'),"+
