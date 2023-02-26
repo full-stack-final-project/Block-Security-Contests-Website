@@ -64,6 +64,9 @@ public class ControlServlet extends HttpServlet {
         	case "/logout":
         		logout(request,response);
         		break;
+        	case "/checkUserID":
+        		checkUserID(request, response);
+        		break;
         	
 	    	}
 	    }
@@ -90,6 +93,11 @@ public class ControlServlet extends HttpServlet {
 	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    }
 	    
+	    protected void checkUserID(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	PrintWriter out = response.getWriter();
+	    	out.print("looks good");
+	    	out.flush();
+	    }
 	    
 	    protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	 String wallet_address = request.getParameter("walletAddress");
