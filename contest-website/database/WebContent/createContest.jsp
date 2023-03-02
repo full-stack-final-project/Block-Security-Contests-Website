@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -107,7 +110,11 @@ function validateForm() {
 			<div class="scroll-box">
 				<br>
                 <label for="judgeSelect">Choose 5-10 Judges:</label><br><br>
-                <input type="checkbox" id="judge1" name="judges" value="Judge 1">
+                <c:forEach items="${judgesList}" var="judge">
+        			<input type="checkbox" name="judges" value="${judge}" id="${judge}" />
+        			<label for="${judge}">${judge}</label><br />
+   				 </c:forEach>
+               <!--  <input type="checkbox" id="judge1" name="judges" value="Judge 1">
                 <label for="judge1">Judge 1</label><br>
                 <input type="checkbox" id="judge2" name="judges" value="Judge 2">
                 <label for="judge2">Judge 2</label><br>
@@ -116,7 +123,7 @@ function validateForm() {
                 <input type="checkbox" id="judge4" name="judges" value="Judge 4">
                 <label for="judge4">Judge 4</label><br>
                 <input type="checkbox" id="judge5" name="judges" value="Judge 5">
-                <label for="judge5">Judge 5</label><br>
+                <label for="judge5">Judge 5</label><br> -->
             </div>
             
             <br><br>
