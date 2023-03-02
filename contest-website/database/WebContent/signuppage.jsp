@@ -66,6 +66,7 @@
   		}
 		
 	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js">></script>
 	<script type="text/javascript">
 		function checkPasswords() {
 			var password = document.getElementById("password").value;
@@ -115,6 +116,19 @@
 			    document.getElementById("submitBtn").disabled = true;
 			  }
 			}
+		$(document).ready(function(){
+			  $("#userID").blur(function(){
+			    var userIDValue = $('#userID').val();
+			    $.ajax({
+			    	type: "post",
+			    	url: "checkUserID",
+			    	data: "userID="+userIDValue,
+			    	success: function(data){
+			    		$("#userIDError").html(data)
+			    	}
+			    });
+			  });
+			});
 
 	</script>
 </head>
@@ -135,7 +149,11 @@
 			<label for="walletAddress">Wallet Address:</label>
 			<input type="text" id="walletAddress" name="walletAddress" required maxlength="42" onkeyup="checkWalletAddress()">
 			<span id="walletError" class="error"></span><br><br>
-
+			
+			<label for="userID">User ID:</label>
+			<input type="text" id="userID" name="userID" required maxlength="30">
+			<span id="userIDError" class="error"></span><br><br>
+			
 			<label for="password">Password:</label>
 			<input type="password" id="password" name="password" required onkeyup="checkPasswords()"><br><br>
 			<label for="confirmPassword">Confirm Password:</label>

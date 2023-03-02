@@ -224,7 +224,7 @@ public class userDAO
         System.out.println(checks);	
         
         if (resultSet.next()) {
-        	checks = true;
+        	checks = false;
         }
 
         
@@ -232,25 +232,28 @@ public class userDAO
     	return checks;
     	
     }
-
-    public boolean checkEmail(String email) throws SQLException {
-    	boolean checks = false;
-    	String sql = "SELECT * FROM User WHERE email = ?";
+    
+    
+    public boolean checkUserID(String userID, String role) throws SQLException {
+    	boolean checks = true;
+    	String sql = "SELECT * From " + role + "  WHERE " +  "login_id = ?";
+    	System.out.print(sql);
     	connect_func();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-        preparedStatement.setString(1, email);
+        preparedStatement.setString(1, userID);
+        System.out.print(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
         
         System.out.println(checks);	
         
         if (resultSet.next()) {
-        	checks = true;
+        	checks = false;
         }
-        
         System.out.println(checks);
     	return checks;
+    	
     }
-    
+
     public boolean checkPassword(String password) throws SQLException {
     	boolean checks = false;
     	String sql = "SELECT * FROM User WHERE password = ?";
