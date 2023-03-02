@@ -18,7 +18,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
-
+import java.util.ArrayList;
 
 public class ControlServlet extends HttpServlet {
 	    private static final long serialVersionUID = 1L;
@@ -67,6 +67,9 @@ public class ControlServlet extends HttpServlet {
         	case "/checkUserID":
         		checkUserID(request, response);
         		break;
+        	case "/create":
+        		createPage(request, response);
+        		break;
         	
 	    	}
 	    }
@@ -87,10 +90,20 @@ public class ControlServlet extends HttpServlet {
 //	     
 //	        System.out.println("listPeople finished: 111111111111111111111111111111111111");
 //	    }
+	    
+	    
 	    	        
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
 //	    	request.setAttribute("resStr","You just initialized the database. You can review the whole database through Workbench now");
 	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
+	    }
+	    
+	    protected void createPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<String> judgesName = userDAO.listJudgesName();
+	    	request.setAttribute("judgesList", judgesName);
+	    	RequestDispatcher rd = request.getRequestDispatcher("createContest.jsp");
+	    	rd.forward(request, response);
+	    	
 	    }
 	    
 	    protected void checkUserID(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {

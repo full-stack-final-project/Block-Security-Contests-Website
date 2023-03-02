@@ -109,6 +109,23 @@ public class userDAO
 //        return listUser;
 //    }
     
+    public List<String> listJudgesName() throws SQLException{
+    	List<String> judgesName = new ArrayList<String>();
+    	String sql = "Select login_id, avg_score from judge;";
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String judgeID = resultSet.getString("login_id");
+    		String judgeScore = resultSet.getString("avg_score");
+    		String judgeName = judgeID + " " + judgeScore + "/10";
+    		judgesName.add(judgeName);
+    	}
+    	
+    	return judgesName;
+    	
+    }
+    
     public List<sponsor> listBigSponsors() throws SQLException{
     	List<sponsor> bigSponsors = new ArrayList<sponsor>();
     	
