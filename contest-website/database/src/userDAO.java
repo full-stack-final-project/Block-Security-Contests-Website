@@ -109,6 +109,12 @@ public class userDAO
 //        return listUser;
 //    }
     
+    public List<sponsor> listBigSponsors() throws SQLException{
+    	List<sponsor> bigSponsors = new ArrayList<sponsor>();
+    	
+    	
+    }
+    
     protected void disconnect() throws SQLException {
         if (connect != null && !connect.isClosed()) {
         	connect.close();
@@ -345,6 +351,8 @@ public class userDAO
 					        	"unique (login_id), " +
 							    "reward_balance float default 0," +
 							    "password varchar(30)," +
+							    "avg_score float," + 
+							    "review_number int default 0," + 
 							    "PRIMARY KEY (judge_id) " +
 							    ");"),
 					        
@@ -425,17 +433,17 @@ public class userDAO
     			    			"('0x3F3568E46909FB7AAE17B1C31F7D2F334CF1C6E5', 'eVtMDD5u', '2000', '1919'),"+
     			    			"('0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', 'i1AiG', '4000', '1010');"),
         		
-        		("insert into judge(judge_id, login_id, reward_balance, password) "+
-            			"values ('0x7028B6789BBEE245564032790282FD27B8042476', 'UPnNuu', '400', '1231'),"+
-    			    		 	"('0x4967CFB5FC27C098230CFE8B8985234D91D52886', 'r6vPbtH', '400', '1232'),"+
-    			    	 	 	"('0xA115319467FB68EDD5DA513152B1158A2EF14CBF', '8uSPO2x', '400', '1233'),"+
-    			    		 	"('0xA542FE379E6E11749D19F1AB9514E0202D6E64AC', 'ckoC4v2', '400', '1234'),"+
-    			    		 	"('0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB', 'Q1Mbbjz', '400', '1235'),"+
-    			    		 	"('0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C', 'nGv5', '400', '1236'),"+
-    			    			"('0x987263D76E9C6674D9330A3B6F1A3E6FB4801691', 'AmKrgjq0', '400', '1237'),"+
-    			    			"('0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8', '7L9is', '400', '1238'),"+
-    			    			"('0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83', 'aC2BS', '400', '1239'),"+
-    			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', 'VCjLuqf', '400', '1230');"),
+        		("insert into judge(judge_id, login_id, reward_balance, password, avg_score, review_number) "+
+            			"values ('0x7028B6789BBEE245564032790282FD27B8042476', 'UPnNuu', '400', '1231', '8', '1'),"+
+    			    		 	"('0x4967CFB5FC27C098230CFE8B8985234D91D52886', 'r6vPbtH', '400', '1232', '8', '1'),"+
+    			    	 	 	"('0xA115319467FB68EDD5DA513152B1158A2EF14CBF', '8uSPO2x', '400', '1233', '8', '1'),"+
+    			    		 	"('0xA542FE379E6E11749D19F1AB9514E0202D6E64AC', 'ckoC4v2', '400', '1234', '8', '1'),"+
+    			    		 	"('0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB', 'Q1Mbbjz', '400', '1235', '8', '1'),"+
+    			    		 	"('0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C', 'nGv5', '400', '1236', '8', '1'),"+
+    			    			"('0x987263D76E9C6674D9330A3B6F1A3E6FB4801691', 'AmKrgjq0', '400', '1237', '8', '1'),"+
+    			    			"('0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8', '7L9is', '400', '1238', '8', '1'),"+
+    			    			"('0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83', 'aC2BS', '400', '1239', '8', '1'),"+
+    			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', 'VCjLuqf', '400', '1230', '8', '1');"),
         		
         		("insert into participate(contestant_id, contest_id, contestant_reward) "+
             			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', '0x8A3A72C9692503153B9AE06852BE307CA3BEE18F', '500'),"+

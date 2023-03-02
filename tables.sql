@@ -52,6 +52,8 @@ CREATE TABLE judge (
   unique (login_id),
   reward_balance float default 0,
   password varchar(30),
+  avg_score float,
+  review_number int default 0,
   PRIMARY KEY (judge_id)
 );
 
