@@ -118,7 +118,7 @@ public class userDAO
     	while (resultSet.next()) {
     		String judgeID = resultSet.getString("login_id");
     		String judgeScore = resultSet.getString("avg_score");
-    		String judgeName = judgeID + " " + judgeScore + "/10";
+    		String judgeName = judgeID + " (" + judgeScore + "/10)";
     		judgesName.add(judgeName);
     	}
     	
@@ -128,8 +128,34 @@ public class userDAO
     
     public List<sponsor> listBigSponsors() throws SQLException{
     	List<sponsor> bigSponsors = new ArrayList<sponsor>();
-    	
-    	
+    	String sql = "select * from sponsor where sponsor_id in (\r\n"
+    			+ "select sponsor_id as selected_sponsor\r\n"
+    			+ "from contest group by sponsor_id\r\n"
+    			+ "having count(sponsor_id)=(\r\n"
+    			+ "	select max(count_num)\r\n"
+    			+ "	from (\r\n"
+    			+ "		select sponsor_id, count(sponsor_id) count_num\r\n"
+    			+ "		from contest\r\n"
+    			+ "		group by sponsor_id) groupby_sponsor \r\n"
+    			+ ") ) ;";
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+ 
+    	while (resultSet.next()) {
+    		String sponsor_id = resultSet.getString("sponsor_id");
+    		String login_id = resultSet.getString("login_id");
+    		String company_name = resultSet.getString("company_name");
+    		String email = resultSet.getString("email");
+    		String address = resultSet.getString("address");
+    		String password = resultSet.getString("password");
+    		long balance = resultSet.getLong("balance"); 
+    		sponsor sponsors = new sponsor(sponsor_id, login_id, company_name, email, address, password, balance);
+    		bigSponsors.add(sponsors);
+    	}        
+	    resultSet.close();
+	    disconnect();        
+	    return bigSponsors;
     }
     
     protected void disconnect() throws SQLException {

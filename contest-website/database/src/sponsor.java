@@ -1,18 +1,22 @@
 public class sponsor extends user{
+	protected String login_id;
 	protected String company_name;
 	protected String email;
 	protected String address;
+	protected long balance;
 
 	public sponsor() {
 	}
  
-    public sponsor(String id, String company_name, String email, String address, String password) 
+    public sponsor(String id, String login_id, String company_name, String email, String address, String password, long balance) 
     {
         this.id = id;
+        this.login_id = login_id;
         this.company_name = company_name;
         this.email = email;
         this.address = address;
         this.password = password;
+        this.balance = balance;
     }
     
    //getter and setter methods
@@ -33,8 +37,24 @@ public class sponsor extends user{
     public String getAddress() {
         return this.address;
     }
-    public void setRewardBalance(String address) {
+    public void setAddress(String address) {
     	this.address = address;
     }
+    
+    public String getLoginID() {
+    	return this.login_id;
+    }
+    public void setLoginID(String login_id) {
+    	this.login_id = login_id;
+    }
+    
+    public long getBalance() {
+    	return this.balance;
+    }
+    public void setBalance(long balance) {
+    	this.balance = balance;
+    }
+    
+    
 
 }

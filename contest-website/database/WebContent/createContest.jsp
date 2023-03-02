@@ -93,7 +93,7 @@ function validateForm() {
 	<main>
 		<form method="post" action="createContest" onsubmit="return validateForm();">
 			<label for="title">Contest Title:</label><br><br>
-			<!-- <input type="text" id="title" name="title" required><br><br>
+			<input type="text" id="title" name="title" required><br><br>
 
 			<label for="wallet">Contest Wallet Address:</label><br><br>
 			<input type="text" id="wallet" name="wallet" pattern="^0x[A-Fa-f0-9]{40}$" required><br><br>
@@ -105,7 +105,7 @@ function validateForm() {
 			<input type="datetime-local" id="begin" name="begin" required><br><br>
 
 			<label for="end">End Time:</label><br><br>
-			<input type="datetime-local" id="end" name="end" required><br><br> -->
+			<input type="datetime-local" id="end" name="end" required><br><br>
 
 			<div class="scroll-box">
 				<br>

@@ -2,20 +2,19 @@
 
 public class judge extends user{
 	protected float reward_balance;
+	protected float avg_score;
+	protected int review_number;
 
 	public judge() {
 	}
- 
-    public judge(float reward_balance) 
-    {
-        this.reward_balance = reward_balance;
-    }
     
-    public judge(String id, String password, float reward_balance) 
+    public judge(String id, String password, float reward_balance, float avg_score, int review_number) 
     {
         this.id = id;
     	this.password = password;
     	this.reward_balance = reward_balance;
+    	this.avg_score = avg_score;
+        this.review_number = review_number;
     }
     
    //getter and setter methods
@@ -24,6 +23,20 @@ public class judge extends user{
     }
     public void setRewardBalance(float reward_balance) {
     	this.reward_balance = reward_balance;
+    }
+    
+    public float getAvgScore() {
+    	return this.avg_score;
+    }
+    public void setAvgScore(float avg_score) {
+    	this.avg_score = avg_score;
+    }
+    
+    public int getReviewNumber() {
+    	return this.review_number;
+    }
+    public void setReviewNumber(int review_number) {
+    	this.review_number = review_number;
     }
 
 }
