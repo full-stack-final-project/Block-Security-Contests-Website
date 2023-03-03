@@ -41,6 +41,7 @@ CREATE TABLE participate (
   contestant_id varchar(42),
   contest_id varchar(42),
   contestant_reward float default 0,
+  submission text,
   PRIMARY KEY (contestant_id,contest_id),
   FOREIGN KEY (contestant_id) REFERENCES contestant (contestant_id),
   FOREIGN KEY (contest_id) REFERENCES contest (contest_id)

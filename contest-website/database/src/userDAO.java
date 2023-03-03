@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.sql.PreparedStatement;
 //import java.sql.Connection;
 //import java.sql.PreparedStatement;
@@ -124,6 +125,47 @@ public class userDAO
     	
     	return judgesName;
     	
+    }
+    
+    public List<contest> getOpenContests() throws SQLException{
+    	List<contest> open_contests = new ArrayList<contest>();
+    	String sql = "Select * from contest where status = 'opened';";
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String contest_id = resultSet.getString("contest_id");
+    		String sponsor_id = resultSet.getString("sponsor_id");
+    		String title = resultSet.getString("title");
+    		LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
+    		LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
+    		
+    		String status = resultSet.getString("status");
+    		String requirement_list = resultSet.getString("requirement_list");
+    		long sponsor_fee = resultSet.getLong("sponsor_fee");
+    		contest opened_contest = new contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee);
+    		open_contests.add(opened_contest);
+    	}
+    	
+    	return open_contests;
+    }
+    
+    public List<contestant> rankContestants() throws SQLException{
+    	List<contestant> contestant_list = new ArrayList<contestant>();
+    	String sql = "select * from contestant order by reward_balance desc;";
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String contestant_id = resultSet.getString("contestant_id");
+    		String login_id = resultSet.getString("login_id");
+    		float reward_balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		
+    		contestant contestants = new contestant(contestant_id, login_id, reward_balance, password);
+    		contestant_list.add(contestants);
+    	}
+    	return contestant_list;
     }
     
     public List<sponsor> listBigSponsors() throws SQLException{
@@ -386,6 +428,7 @@ public class userDAO
 						        "contestant_id varchar(42), " +
 						        "contest_id varchar(42), " +
 						        "contestant_reward float default 0, " +
+						        "submission text, " +
 						        "PRIMARY KEY (contestant_id,contest_id), " +
 						        "FOREIGN KEY (contestant_id) REFERENCES contestant (contestant_id)," +
 						        "FOREIGN KEY (contest_id) REFERENCES contest (contest_id)" +
