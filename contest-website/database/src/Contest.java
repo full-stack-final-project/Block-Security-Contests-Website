@@ -1,6 +1,6 @@
 import java.time.LocalDateTime;
 
-public class contest {
+public class Contest {
 	protected String contest_id;
 	protected String sponsor_id;
 	protected String title;
@@ -10,12 +10,12 @@ public class contest {
 	protected String requirement_list;
 	protected long sponsor_fee;
 	
-	public contest(String contest_id, String sponsor_id) {
+	public Contest(String contest_id, String sponsor_id) {
 		this.contest_id = contest_id;
 		this.sponsor_id = sponsor_id;
 	}
 	
-	public contest(String contest_id, String sponsor_id, String title, LocalDateTime begin_time, LocalDateTime end_time, String status, String requirement_list, long fee) {
+	public Contest(String contest_id, String sponsor_id, String title, LocalDateTime begin_time, LocalDateTime end_time, String status, String requirement_list, long fee) {
 		this.contest_id = contest_id;
 		this.sponsor_id = sponsor_id;
 		this.title = title;

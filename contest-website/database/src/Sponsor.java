@@ -1,14 +1,14 @@
-public class sponsor extends user{
+public class Sponsor extends User{
 	protected String login_id;
 	protected String company_name;
 	protected String email;
 	protected String address;
 	protected long balance;
 
-	public sponsor() {
+	public Sponsor() {
 	}
  
-    public sponsor(String id, String login_id, String company_name, String email, String address, String password, long balance) 
+    public Sponsor(String id, String login_id, String company_name, String email, String address, String password, long balance) 
     {
         this.id = id;
         this.login_id = login_id;
