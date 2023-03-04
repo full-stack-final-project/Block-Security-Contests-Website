@@ -1,13 +1,13 @@
 
-public class contestant extends user{
+public class Contestant extends User{
 	protected float reward_balance;
 	protected String login_id;
 
-	public contestant() {
+	public Contestant() {
 	}
  
 
-    public contestant(String id, String login_id, float reward_balance, String password) 
+    public Contestant(String id, String login_id, float reward_balance, String password) 
     {
         this.id = id;
         this.login_id = login_id;

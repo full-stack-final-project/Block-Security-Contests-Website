@@ -174,15 +174,15 @@ public class ControlServlet extends HttpServlet {
 	   	 	String role = request.getParameter("role");
 	   	 	if (userDAO.checkWalletAddress(wallet_address, role)) {
 	   	 		if (role.equals("sponsor")) {
-	   	 			sponsor sponsors = new sponsor(wallet_address, "", "", "", password);
+	   	 			Sponsor sponsors = new Sponsor(wallet_address, "", "", "", password);
 	   	 			userDAO.insert(sponsors, "sponsor");
 	   	 		}
 	   	 		if (role.equals("judge")) {
-	   	 			judge judges = new judge(wallet_address, password, 0);
+	   	 			Judge judges = new Judge(wallet_address, password, 0);
 	   	 			userDAO.insert(judges, "judge");
 	   	 		}
 	   	 		if (role.equals("contestant")) {
-	   	 			contestant contestants = new contestant(wallet_address, password, 0);
+	   	 			Contestant contestants = new Contestant(wallet_address, password, 0);
 	   	 			userDAO.insert(contestants, "contestant");
 	   	 		}	
 	   	 		request.setAttribute("resStr","Sign up successfully");

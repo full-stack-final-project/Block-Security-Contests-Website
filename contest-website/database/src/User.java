@@ -1,18 +1,18 @@
-public class user 
+public class User 
 {
 		protected String password;
 	    protected String id;
 	 
 	    //constructors
-	    public user() {
+	    public User() {
 	    }
 	 
-	    public user(String id) 
+	    public User(String id) 
 	    {
 	        this.id = id;
 	    }
 	    
-	    public user(String id, String password) 
+	    public User(String id, String password) 
 	    {
 	        this.id = id;
 	    	this.password = password;

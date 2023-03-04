@@ -1,14 +1,14 @@
 
 
-public class judge extends user{
+public class Judge extends User{
 	protected float reward_balance;
 	protected float avg_score;
 	protected int review_number;
 
-	public judge() {
+	public Judge() {
 	}
     
-    public judge(String id, String password, float reward_balance, float avg_score, int review_number) 
+    public Judge(String id, String password, float reward_balance, float avg_score, int review_number) 
     {
         this.id = id;
     	this.password = password;
