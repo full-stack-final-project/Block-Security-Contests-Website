@@ -8,9 +8,10 @@
 	<title>Create Contest</title>
 	
 </head>
-
+	
 	<title>Create Contest</title>
-	<style>
+<style>
+
 		body {
 			background-color: #f2f2f2;
 			font-family: Arial, Helvetica, sans-serif;
@@ -65,8 +66,9 @@
 			margin-top: 5px;
 		}
 		.scroll-box { border:2px solid #ccc; width:500px; height: 300px; overflow-y: scroll;
-	</style>
+
 	
+</style>	
 <script>
 function validateForm() {
     var checkboxes = document.getElementsByName('judges');

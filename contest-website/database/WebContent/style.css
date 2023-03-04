@@ -1,0 +1,57 @@
+
+		body {
+			background-color: #f2f2f2;
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		h1 {
+			color: #333;
+			font-size: 32px;
+			font-weight: bold;
+			text-align: center;
+			margin-top: 50px;
+		}
+		form {
+			background-color: #fff;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0,0,0,0.3);
+			margin: 50px auto;
+			max-width: 500px;
+			padding: 30px;
+		}
+		
+		input[type=text], input[type=password], select {
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			font-size: 16px;
+			padding: 10px;
+			width: 100%;
+			margin-bottom: 20px;
+			box-sizing: border-box;
+			color: #333;
+		}
+		input[type=submit] {
+			background-color: #4CAF50;
+			color: white;
+			font-size: 16px;
+			font-weight: bold;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			padding: 10px 20px;
+		}
+		input[type=submit]:hover {
+			background-color: #3e8e41;
+		}
+		.error {
+			color: red;
+			font-size: 14px;
+			margin-top: 5px;
+		}
+		.success {
+			color: green;
+			font-size: 14px;
+			margin-top: 5px;
+		}
+		.scroll-box { border:2px solid #ccc; width:500px; height: 300px; overflow-y: scroll;
+
+	
