@@ -70,6 +70,9 @@ public class ControlServlet extends HttpServlet {
         	case "/create":
         		createPage(request, response);
         		break;
+        	case "/createContest":
+        		createContest(request, response);
+        		break;
         	
 	    	}
 	    }
@@ -103,6 +106,10 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("judgesList", judgesName);
 	    	RequestDispatcher rd = request.getRequestDispatcher("createContest.jsp");
 	    	rd.forward(request, response);
+	    	
+	    }
+	    
+	    protected void createContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	
 	    }
 	    
