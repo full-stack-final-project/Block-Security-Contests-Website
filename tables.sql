@@ -63,6 +63,7 @@ create TABLE grade(
     contestant_id varchar(42),
     judge_id varchar(42),
     score integer default 0,
+    complete bool default False,
     check (score >= 0 & score <= 100),
 	primary key (contest_id, contestant_id, judge_id),
     foreign key (contest_id) references contest (contest_id),
