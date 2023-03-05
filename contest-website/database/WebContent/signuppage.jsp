@@ -129,7 +129,12 @@
 			    });
 			  });
 			});
-
+		function displayOptions(value) {
+	        if (value == "sponsor") {
+	          document.getElementById("spsonsorGroup").style.display = "none";
+	          
+	        } 
+	        }
 	</script>
 </head>
 <body>
@@ -137,14 +142,14 @@
 		<h1>Sign Up</h1>
 		<form action="signup" method="post">
 		<label>Role:</label>
-			<input type="radio" id="sponsor" name="role" value="sponsor" required >
+			<input type="radio" id="sponsor" name="role" value="sponsor" onclick="displayOptions(this.value)" required >
 			<label for="sponsor">Sponsor</label>
 			<input type="radio" id="judge" name="role" value="judge" >
 			<label for="judge">Judge</label>
 			<input type="radio" id="contestant" name="role" value="contestant" >
 			<label for="contestant">Contestant</label>
-			<input type="radio" id="root" name="role" value="root">
-			<label for="root">Root</label><br><br>
+			<!-- <input type="radio" id="root" name="role" value="root">
+			<label for="root">Root</label><br><br> -->
 			
 			<label for="walletAddress">Wallet Address:</label>
 			<input type="text" id="walletAddress" name="walletAddress" required maxlength="42" onkeyup="checkWalletAddress()">
@@ -159,7 +164,16 @@
 			<label for="confirmPassword">Confirm Password:</label>
 			<input type="password" id="confirmPassword" name="confirmPassword" required onkeyup="checkPasswords()">
 			<span id="passwordError" class="error"></span><br><br>
+			 <div class="form-group" id="spsonsorGroup" style="display: block;">
+			<label for="companyName">Company Name:</label>
+			<input type="text" id="companyName" name="companyName" required >
+			<label for="email">Email Address</label>
+			<input type="text" id="email" name="email" required >
+			<label for="address">Address:</label>
+			<input type="text" id="address" name="address" required ">
+			</div>
 			<input type="submit" id="submitBtn" value="Submit" disabled>
+			
 		</form>
 	</div>
 </body>

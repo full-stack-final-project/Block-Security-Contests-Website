@@ -8,7 +8,7 @@ public class Judge extends User{
 	public Judge() {
 	}
     
-    public Judge(String id, String password, float reward_balance, float avg_score, int review_number) 
+    public Judge(String id, String login_id, String password, float reward_balance, float avg_score, int review_number) 
     {
         this.id = id;
     	this.password = password;
