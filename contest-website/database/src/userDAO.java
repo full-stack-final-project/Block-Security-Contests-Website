@@ -626,11 +626,52 @@ public class userDAO
     			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '8', 'Inside along PM own break. Play sit good able.');")
 			    			};
         
+        String[] EVENT = {
+        		("-- update status for a contest --\r\n"
+        				+ "drop procedure if exists contest_start_status;\r\n"
+        				+ "drop procedure if exists contest_close_status;"),
+        		
+        		("DELIMITER $$\r\n"
+        				+ "CREATE DEFINER=`john`@`%` PROCEDURE `contest_start_status`()\r\n"
+        				+ "BEGIN\r\n"
+        				+ "	update contest set status = 'opened'\r\n"
+        				+ "    where status = 'created' and (UNIX_TIMESTAMP(begin_time) <= unix_timestamp(now()));\r\n"
+        				+ "END$$\r\n"
+        				+ "DELIMITER ;"),
+        		
+        		("DELIMITER $$\r\n"
+        				+ "CREATE DEFINER=`john`@`%` PROCEDURE `contest_close_status`()\r\n"
+        				+ "BEGIN\r\n"
+        				+ "	update contest set status = 'closed'\r\n"
+        				+ "    where status = 'opened' and (UNIX_TIMESTAMP(end_time) <= unix_timestamp(now()));\r\n"
+        				+ "END$$\r\n"
+        				+ "DELIMITER ;"),
+        		
+        		("-- set scheduled task on --\r\n"
+        				+ "set global event_scheduler = on;\r\n"
+        				+ "\r\n"
+        				+ "drop event if exists check_contest_status;\r\n"
+        				+ "delimiter |\r\n"
+        				+ "create DEFINER=`john`@'%' EVENT if not exists`check_contest_status`\r\n"
+        				+ "on schedule\r\n"
+        				+ "every '10' second starts '2023-03-02 08:00:00'\r\n"
+        				+ "comment 'check if contest stauts needs to be updated'\r\n"
+        				+ "do\r\n"
+        				+ "	begin\r\n"
+        				+ "		CALL `contestdb`.`contest_start_status`();\r\n"
+        				+ "		CALL `contestdb`.`contest_close_status`();\r\n"
+        				+ "	end |\r\n"
+        				+ "    \r\n"
+        				+ "delimiter ; ")
+        };
+        
         //for loop to put these in database
         for (int i = 0; i < INITIAL.length; i++)
         	statement.execute(INITIAL[i]);
         for (int i = 0; i < TUPLES.length; i++)	
         	statement.execute(TUPLES[i]);
+        for (int i = 0; i < EVENT.length; i ++)
+        	statement.execute(EVENT[i]);
         disconnect();
     }
     
