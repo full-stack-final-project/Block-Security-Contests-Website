@@ -1,4 +1,5 @@
 import java.io.IOException;
+
 import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -17,8 +18,12 @@ import javax.servlet.http.HttpSession;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ControlServlet extends HttpServlet {
 	    private static final long serialVersionUID = 1L;
@@ -102,6 +107,7 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    
 	    protected void createPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	
 	    	List<String> judgesName = userDAO.listJudgesName();
 	    	request.setAttribute("judgesList", judgesName);
 	    	RequestDispatcher rd = request.getRequestDispatcher("createContest.jsp");
@@ -110,14 +116,38 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    
 	    protected void createContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestName = request.getParameter("title");
+	    	String walletAddress = request.getParameter("wallet");
+	    	String funding = request.getParameter("funding");
+	    	long fundingContest = Long.parseLong(funding);
+	    	String begin_time_str = request.getParameter("begin");
+	    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+	    	LocalDateTime begin_time = LocalDateTime.parse(begin_time_str, formatter);
+	    	String end_time_str = request.getParameter("end");
+	    	LocalDateTime end_time = LocalDateTime.parse(end_time_str, formatter);
+	    	String[] selectJudges = request.getParameterValues("judges");
+	    	String sponsor_id = request.getParameter("sponsorID");
 	    	
+	    	String requirment = request.getParameter("requirment");
+	    	Contest contest = new Contest(walletAddress, sponsor_id, contestName, begin_time, end_time, "created", requirment, fundingContest);
+	    	
+	    	userDAO.createContest(contest, selectJudges);
+	    	
+	    		    	
 	    }
 	    
 	    protected void checkUserID(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	PrintWriter out = response.getWriter();
-	    	if (userDAO.checkUserID(currentUser, currentUser))
-	    	out.print("looks good");
+	    	String outMessage = "";
+	    	if (userDAO.checkUserID(currentUser, currentUser)) {
+	    		outMessage = "Good UserID";
+	    	}
+	    	else {
+	    		outMessage = "This UserID has been used";
+	    	}
+	    	out.print(outMessage);
 	    	out.flush();
+	    	
 	    }
 	    
 	    protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {

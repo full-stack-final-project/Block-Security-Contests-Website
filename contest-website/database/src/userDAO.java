@@ -80,6 +80,12 @@ public class userDAO
         }
     }
     
+    protected void disconnect() throws SQLException {
+        if (connect != null && !connect.isClosed()) {
+        	connect.close();
+        }
+    }
+    
 //    public List<user> listAllUsers() throws SQLException {
 //        List<user> listUser = new ArrayList<user>();        
 //        String sql = "SELECT * FROM User";      
@@ -242,19 +248,56 @@ public class userDAO
 	    return bigSponsors;
     }
     
-    protected void disconnect() throws SQLException {
-        if (connect != null && !connect.isClosed()) {
-        	connect.close();
+    protected String getJudgeIDByLoginID(String loginID) throws SQLException {
+    	String sql = "select judge_id from judge where login_id = ?";
+    	String judgeID = "";
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	
+    	while (resultSet.next()) {
+    		judgeID = resultSet.getString("judge_id");
+    	}
+    	
+    	return judgeID;
+    }
+    
+  
+    
+    public void createContest(Contest contest, String[] selectJudges) throws SQLException {
+    	String sql = "insert into contest (contest_id, sponsor_id, title, begin_time, end_time,"
+    			+ "status, requirement_list, sponsor_fee) values (?, ? ,?, ?, ?, ?, ?, ?)" ;
+    	connect_func();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, contest.contest_id);
+    	preparedStatement.setString(2, contest.sponsor_id);
+    	preparedStatement.setString(3, contest.title);
+    	preparedStatement.setObject(4, contest.begin_time);
+    	preparedStatement.setObject(5, contest.end_time);
+    	preparedStatement.setString(6, contest.status);
+    	preparedStatement.setString(7, contest.requirement_list);
+    	preparedStatement.setLong(8, contest.sponsor_fee);
+    	preparedStatement.executeUpdate();
+        preparedStatement.close();
+        
+        for (String judge_userID : selectJudges) {
+        	String[] splited = judge_userID.split("\\s+");
+        	String judge_id = getJudgeIDByLoginID(splited[0]);
+        	String sql_judgeby = "insert into judgeby (contest_id, judge_id, 0) values (" 
+        	+ contest.contest_id + ", " + judge_id + ")";
+        	
         }
+        
+    	
+    	
     }
     
     public void insert(User users, String role) throws SQLException {
-    	connect_func("root","pass1234");         
+    	connect_func();         
 		String sql = "insert into " + role + "(" + role + "_id, password) values (?, ?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 		preparedStatement.setString(1, users.getId());
 		preparedStatement.setString(2, users.getPassword());
-		System.out.print(sql);
 //			preparedStatement.setString(1, users.getEmail());
 //			preparedStatement.setString(2, users.getFirstName());
 //			preparedStatement.setString(3, users.getLastName());

@@ -65,20 +65,35 @@
 			font-size: 14px;
 			margin-top: 5px;
 		}
-		.scroll-box { border:2px solid #ccc; width:500px; height: 300px; overflow-y: scroll;
-
+		.scroll-box { border:2px solid #ccc; width:500px; height: 300px; overflow-y: scroll;}
+		
+		textarea {
+			width: 95%;
+			height: 300px;
+			padding: 10px;
+			font-size: 16px;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+			margin-bottom: 20px;
 	
 </style>	
 <script>
 function validateForm() {
-    var checkboxes = document.getElementsByName('judges');
+    var sponsorID = document.getElementsByName('sponsorID').value;
+    console.log(sponsorID);
+    if (!sponsorID){
+    	alert("Please login first!");
+    	
+    }
+    
+	var checkboxes = document.getElementsByName('judges');
     var numChecked = 0;
     for (var i=0; i<checkboxes.length; i++) {
         if (checkboxes[i].checked) {
             numChecked++;
         }
     }
-    if (numChecked < 5 || numChecked > 10) {
+    if ((numChecked < 5 || numChecked > 10) ) {
         alert("Please select between 5 and 10 judges.");
         console.log("Please select between 5 and 10 judges.")
         return false;
@@ -94,6 +109,7 @@ function validateForm() {
 	</header>
 	<main>
 		<form method="post" action="createContest" onsubmit="return validateForm();">
+			<input type="hidden", name="sponsorID", value=${sponsor_id}>
 			<label for="title">Contest Title:</label><br><br>
 			<input type="text" id="title" name="title" required><br><br>
 
@@ -108,7 +124,7 @@ function validateForm() {
 
 			<label for="end">End Time:</label><br><br>
 			<input type="datetime-local" id="end" name="end" required><br><br>
-
+			
 			<div class="scroll-box">
 				<br>
                 <label for="judgeSelect">Choose 5-10 Judges:</label><br><br>
@@ -116,19 +132,11 @@ function validateForm() {
         			<input type="checkbox" name="judges" value="${judge}" id="${judge}" />
         			<label for="${judge}">${judge}</label><br />
    				 </c:forEach>
-               <!--  <input type="checkbox" id="judge1" name="judges" value="Judge 1">
-                <label for="judge1">Judge 1</label><br>
-                <input type="checkbox" id="judge2" name="judges" value="Judge 2">
-                <label for="judge2">Judge 2</label><br>
-                <input type="checkbox" id="judge3" name="judges" value="Judge 3">
-                <label for="judge3">Judge 3</label><br>
-                <input type="checkbox" id="judge4" name="judges" value="Judge 4">
-                <label for="judge4">Judge 4</label><br>
-                <input type="checkbox" id="judge5" name="judges" value="Judge 5">
-                <label for="judge5">Judge 5</label><br> -->
             </div>
             
             <br><br>
+            <label for="requirement">Requirement list:</label><br><br>
+            <textarea id="requirement" name="requirement"></textarea><br><br>
 
 			<input type="submit" id="submit" name="submit" value="Create Contest" >
 		</form>
