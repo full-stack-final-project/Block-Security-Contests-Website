@@ -535,6 +535,7 @@ public class userDAO
 							    "contestant_id varchar(42)," +
 							    "judge_id varchar(42)," +
 							    "score integer," +
+							    "complete bool default False," + 
 							    "check (score >= 0 & score <= 100)," +
 							    "primary key (contest_id, contestant_id, judge_id)," +
 							    "foreign key (contest_id) references contest (contest_id)," +
@@ -595,29 +596,29 @@ public class userDAO
     			    			"('0x9AE248CF24DB9E1A5DB95128230DB6880EE958AC', '0xAE68D751D3F446DE82E721D710A39699D75ED4E6', '1983-12-11 17:07:42', '1988-03-16 16:37:25', 'past', 'Discover professional deep music. Now coach data black yard apply.', '10000'),"+
     			    			"('0x45D4F7663EEE2246299620F1B6D69EB8C1675635', '0xAE68D751D3F446DE82E721D710A39699D75ED4E6', '2005-04-10 23:24:54', '2011-08-04 03:00:23', 'past', 'Building make be we mother. Mission now clearly but according Mr wait.', '10000');"),
         		
-        		("insert into contestant(contestant_id, login_id, reward_balance, password) "+
-            			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', 'DJA8', '500', '1122'),"+
-    			    		 	"('0x35A85E2BAD55C300CE6275B15CAB8CA31D84C599', '5HpCn', '500', '2211'),"+
-    			    	 	 	"('0xFCD3B620543DD7F60E242DF58682B868E85736AD', 'W0Zq', '1000', '1313'),"+
-    			    		 	"('0x680ABFEC8CB5FA2DAEC5C1390B5A215107A4B395', 'WbGY', '2000', '1414'),"+
-    			    		 	"('0x07C753B5DC16CF9A08C0FB9E1ED2DF7BFF8D2183', 'wuWk2', '4000', '1515'),"+
-    			    		 	"('0x2E1F392C012084AFEE3488950F3EDB976BA58E24', 'qjgA', '500', '1616'),"+
-    			    			"('0x803B1734224C73B9FFC5F08B5EF197695F002EF1', 'zH9TjKF', '500', '1717'),"+
-    			    			"('0x3CFBCB6D1980E895BFE47C09677A2D6D130CC7F4', 'b27AQ54y', '1000', '1818'),"+
-    			    			"('0x3F3568E46909FB7AAE17B1C31F7D2F334CF1C6E5', 'eVtMDD5u', '2000', '1919'),"+
-    			    			"('0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', 'i1AiG', '4000', '1010');"),
+        		("insert into contestant(contestant_id, login_id, password) "+
+            			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', 'DJA8', '1122'),"+
+    			    		 	"('0x35A85E2BAD55C300CE6275B15CAB8CA31D84C599', '5HpCn', '2211'),"+
+    			    	 	 	"('0xFCD3B620543DD7F60E242DF58682B868E85736AD', 'W0Zq', '1313'),"+
+    			    		 	"('0x680ABFEC8CB5FA2DAEC5C1390B5A215107A4B395', 'WbGY', '1414'),"+
+    			    		 	"('0x07C753B5DC16CF9A08C0FB9E1ED2DF7BFF8D2183', 'wuWk2', '1515'),"+
+    			    		 	"('0x2E1F392C012084AFEE3488950F3EDB976BA58E24', 'qjgA', '1616'),"+
+    			    			"('0x803B1734224C73B9FFC5F08B5EF197695F002EF1', 'zH9TjKF', '1717'),"+
+    			    			"('0x3CFBCB6D1980E895BFE47C09677A2D6D130CC7F4', 'b27AQ54y', '1818'),"+
+    			    			"('0x3F3568E46909FB7AAE17B1C31F7D2F334CF1C6E5', 'eVtMDD5u', '1919'),"+
+    			    			"('0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', 'i1AiG', '1010');"),
         		
-        		("insert into judge(judge_id, login_id, reward_balance, password, avg_score, review_number) "+
-            			"values ('0x7028B6789BBEE245564032790282FD27B8042476', 'UPnNuu', '400', '1231', '8', '1'),"+
-    			    		 	"('0x4967CFB5FC27C098230CFE8B8985234D91D52886', 'r6vPbtH', '400', '1232', '8', '1'),"+
-    			    	 	 	"('0xA115319467FB68EDD5DA513152B1158A2EF14CBF', '8uSPO2x', '400', '1233', '8', '1'),"+
-    			    		 	"('0xA542FE379E6E11749D19F1AB9514E0202D6E64AC', 'ckoC4v2', '400', '1234', '8', '1'),"+
-    			    		 	"('0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB', 'Q1Mbbjz', '400', '1235', '8', '1'),"+
-    			    		 	"('0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C', 'nGv5', '400', '1236', '8', '1'),"+
-    			    			"('0x987263D76E9C6674D9330A3B6F1A3E6FB4801691', 'AmKrgjq0', '400', '1237', '8', '1'),"+
-    			    			"('0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8', '7L9is', '400', '1238', '8', '1'),"+
-    			    			"('0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83', 'aC2BS', '400', '1239', '8', '1'),"+
-    			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', 'VCjLuqf', '400', '1230', '8', '1');"),
+        		("insert into judge(judge_id, login_id, password, avg_score, review_number) "+
+            			"values ('0x7028B6789BBEE245564032790282FD27B8042476', 'UPnNuu', '1231', '8', '1'),"+
+    			    		 	"('0x4967CFB5FC27C098230CFE8B8985234D91D52886', 'r6vPbtH', '1232', '8', '1'),"+
+    			    	 	 	"('0xA115319467FB68EDD5DA513152B1158A2EF14CBF', '8uSPO2x', '1233', '8', '1'),"+
+    			    		 	"('0xA542FE379E6E11749D19F1AB9514E0202D6E64AC', 'ckoC4v2', '1234', '8', '1'),"+
+    			    		 	"('0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB', 'Q1Mbbjz', '1235', '8', '1'),"+
+    			    		 	"('0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C', 'nGv5', '1236', '8', '1'),"+
+    			    			"('0x987263D76E9C6674D9330A3B6F1A3E6FB4801691', 'AmKrgjq0', '1237', '8', '1'),"+
+    			    			"('0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8', '7L9is', '1238', '8', '1'),"+
+    			    			"('0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83', 'aC2BS', '1239', '8', '1'),"+
+    			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', 'VCjLuqf', '1230', '8', '1');"),
         		
         		("insert into participate(contestant_id, contest_id, contestant_reward) "+
             			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', '0x8A3A72C9692503153B9AE06852BE307CA3BEE18F', '500'),"+
@@ -668,11 +669,52 @@ public class userDAO
     			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '8', 'Inside along PM own break. Play sit good able.');")
 			    			};
         
+        String[] EVENT = {
+        		("-- update status for a contest --\r\n"
+        				+ "drop procedure if exists contest_start_status;\r\n"
+        				+ "drop procedure if exists contest_close_status;"),
+        		
+        		("DELIMITER $$\r\n"
+        				+ "CREATE DEFINER=`john`@`%` PROCEDURE `contest_start_status`()\r\n"
+        				+ "BEGIN\r\n"
+        				+ "	update contest set status = 'opened'\r\n"
+        				+ "    where status = 'created' and (UNIX_TIMESTAMP(begin_time) <= unix_timestamp(now()));\r\n"
+        				+ "END$$\r\n"
+        				+ "DELIMITER ;"),
+        		
+        		("DELIMITER $$\r\n"
+        				+ "CREATE DEFINER=`john`@`%` PROCEDURE `contest_close_status`()\r\n"
+        				+ "BEGIN\r\n"
+        				+ "	update contest set status = 'closed'\r\n"
+        				+ "    where status = 'opened' and (UNIX_TIMESTAMP(end_time) <= unix_timestamp(now()));\r\n"
+        				+ "END$$\r\n"
+        				+ "DELIMITER ;"),
+        		
+        		("-- set scheduled task on --\r\n"
+        				+ "set global event_scheduler = on;\r\n"
+        				+ "\r\n"
+        				+ "drop event if exists check_contest_status;\r\n"
+        				+ "delimiter |\r\n"
+        				+ "create DEFINER=`john`@'%' EVENT if not exists`check_contest_status`\r\n"
+        				+ "on schedule\r\n"
+        				+ "every '10' second starts '2023-03-02 08:00:00'\r\n"
+        				+ "comment 'check if contest stauts needs to be updated'\r\n"
+        				+ "do\r\n"
+        				+ "	begin\r\n"
+        				+ "		CALL `contestdb`.`contest_start_status`();\r\n"
+        				+ "		CALL `contestdb`.`contest_close_status`();\r\n"
+        				+ "	end |\r\n"
+        				+ "    \r\n"
+        				+ "delimiter ; ")
+        };
+        
         //for loop to put these in database
         for (int i = 0; i < INITIAL.length; i++)
         	statement.execute(INITIAL[i]);
         for (int i = 0; i < TUPLES.length; i++)	
         	statement.execute(TUPLES[i]);
+        for (int i = 0; i < EVENT.length; i ++)
+        	statement.execute(EVENT[i]);
         disconnect();
     }
     
