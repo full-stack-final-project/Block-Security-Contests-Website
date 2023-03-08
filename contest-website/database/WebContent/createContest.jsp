@@ -79,10 +79,11 @@
 </style>	
 <script>
 function validateForm() {
-    var sponsorID = document.getElementsByName('sponsorID').value;
+    var sponsorID = document.getElementById("sponsorID").value;
     console.log(sponsorID);
     if (!sponsorID){
     	alert("Please login first!");
+    	return false;
     	
     }
     
@@ -108,8 +109,8 @@ function validateForm() {
 		<h1>Create Contest</h1>
 	</header>
 	<main>
-		<form method="post" action="createContest" onsubmit="return validateForm();">
-			<input type="hidden", name="sponsorID", value=${sponsor_id}>
+		<form method="post" action="createContest">
+			<input type="hidden" id="sponsorID" name="sponsorID" value=${sponsor_id}>
 			<label for="title">Contest Title:</label><br><br>
 			<input type="text" id="title" name="title" required><br><br>
 
@@ -138,7 +139,7 @@ function validateForm() {
             <label for="requirement">Requirement list:</label><br><br>
             <textarea id="requirement" name="requirement"></textarea><br><br>
 
-			<input type="submit" id="submit" name="submit" value="Create Contest" >
+			<input type="submit" id="submit" name="submit" value="Create Contest" onclick="validateForm()">
 		</form>
 	</main>
 	

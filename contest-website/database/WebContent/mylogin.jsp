@@ -117,8 +117,8 @@
 			<input type="radio" id="root" name="role" value="root" >
 			<label for="root">Root</label><br><br>
 			
-			<label for="walletAddress">Wallet Address:</label>
-			<input type="text" id="walletAddress" name="walletAddress" required maxlength="42" >
+			<label for="walletAddress">User ID:</label>
+			<input type="text" id="userID" name="userID" required  >
 			<span id="walletError" class="error"></span><br><br>
 
 			<label for="password">Password:</label>
