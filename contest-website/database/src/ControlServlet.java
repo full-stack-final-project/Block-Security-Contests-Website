@@ -78,6 +78,12 @@ public class ControlServlet extends HttpServlet {
         	case "/createContest":
         		createContest(request, response);
         		break;
+        	case "/openContest":
+        		openContest(request, response);
+        		break;
+        	case "contestDetails":
+        		contestDetails(request, response);
+        		break;
         	
 	    	}
 	    }
@@ -106,10 +112,35 @@ public class ControlServlet extends HttpServlet {
 	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    }
 	    
-	    protected void createPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    protected void contestDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestID = request.getParameter("id");
+	    	String contestantID = request.getParameter("userID");
+	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	request.setAttribute("contestName", contest.title);
+	    	request.setAttribute("beginTime", contest.begin_time);
+	    	request.setAttribute("endTime", contest.end_time);
+	    	request.setAttribute("requirements", contest.requirement_list);
+	    	request.setAttribute("userID", contestantID);
+	    	request.setAttribute("contestID", contest.contest_id);
+	    	RequestDispatcher rd = request.getRequestDispatcher("contest.jsp");
+	    	rd.forward(request, response);
 	    	
+	    }
+	    
+	    protected void openContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestantID = request.getParameter("id");
+	    	List<Contest> open_contests = userDAO.getOpenContests();
+	    	request.setAttribute("contests", open_contests);
+	    	request.setAttribute("contestantID", contestantID);
+	    	RequestDispatcher rd = request.getRequestDispatcher("openContest.jsp");
+	    	rd.forward(request, response);
+	    }
+	    
+	    protected void createPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String sponsor_id = request.getParameter("sponsor_id");
 	    	List<String> judgesName = userDAO.listJudgesName();
 	    	request.setAttribute("judgesList", judgesName);
+	    	request.setAttribute("sponsor_id", sponsor_id);
 	    	RequestDispatcher rd = request.getRequestDispatcher("createContest.jsp");
 	    	rd.forward(request, response);
 	    	
@@ -132,6 +163,12 @@ public class ControlServlet extends HttpServlet {
 	    	Contest contest = new Contest(walletAddress, sponsor_id, contestName, begin_time, end_time, "created", requirment, fundingContest);
 	    	
 	    	userDAO.createContest(contest, selectJudges);
+	    	userDAO.insertJudgeby(contest, selectJudges);
+	    	
+	    	Contest[] contest_list = new Contest[100];
+   		 	request.setAttribute("userID", sponsor_id);
+   		 	request.setAttribute("contestList", contest_list);
+	   	 	request.getRequestDispatcher("sponsorIndex.jsp").forward(request, response);
 	    	
 	    		    	
 	    }
@@ -151,27 +188,33 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    
 	    protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-	    	 String wallet_address = request.getParameter("walletAddress");
+	    	 String userID = request.getParameter("userID");
 	    	 String password = request.getParameter("password");
 	    	 String role = request.getParameter("role");
 	    	 
-	    	 if (wallet_address.equals("root") && password.equals("pass1234")) {
+	    	 if (userID.equals("root") && password.equals("pass1234")) {
 //	    		 request.setAttribute("resStr","Logging in successfully as the root user");
 		   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    	 }
-	    	 else if (role.equals("sponsor") && userDAO.isValid(wallet_address, password, role)) {
-	    		 request.setAttribute("resStr","Logging in successfully as the sponsor user");
-		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+	    	 else if (role.equals("sponsor") && userDAO.isValid(userID, password, role)) {
+	    		 //request.setAttribute("resStr","Logging in successfully as the sponsor user");
+	    		 Contest[] contest_list = new Contest[100];
+	    		 String sponsor_id = userDAO.getSponsorIDByLoginID(userID);
+	    		 request.setAttribute("userID", sponsor_id);
+	    		 request.setAttribute("contestList", contest_list);
+		   	 	 request.getRequestDispatcher("sponsorIndex.jsp").forward(request, response);
 	    		 
 	    	 }
 	    	 
-	    	 else if (role.equals("contestant") && userDAO.isValid(wallet_address, password, role)) {
-	    		 request.setAttribute("resStr","Logging in successfully as the contestant user");
-		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+	    	 else if (role.equals("contestant") && userDAO.isValid(userID, password, role)) {
+//	    		 request.setAttribute("resStr","Logging in successfully as the contestant user");
+//		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+	    		 String contestantID = userDAO.getContestantIDByLoginID(userID);
+	    		 request.setAttribute(password, role);
 	    		 
 	    	 }
 	    	 
-	    	 else if (role.equals("judge") && userDAO.isValid(wallet_address, password, role)) {
+	    	 else if (role.equals("judge") && userDAO.isValid(userID, password, role)) {
 	    		 request.setAttribute("resStr","Logging in successfully as the judge user");
 		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
 	    		 

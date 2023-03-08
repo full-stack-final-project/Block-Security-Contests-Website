@@ -139,18 +139,26 @@ public class userDAO
     	connect_func();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
+    	Contest opened_contest;
+    	
     	while (resultSet.next()) {
     		String contest_id = resultSet.getString("contest_id");
     		String sponsor_id = resultSet.getString("sponsor_id");
     		String title = resultSet.getString("title");
     		LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
+    		System.out.println(begin_time);
     		LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
     		String status = resultSet.getString("status");
     		String requirement_list = resultSet.getString("requirement_list");
     		long sponsor_fee = resultSet.getLong("sponsor_fee");
-    		Contest opened_contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee);
+    		opened_contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee);
     		open_contests.add(opened_contest);
     	}
+    	
+    	for (Contest c : open_contests) {
+    		System.out.println(c.begin_time);
+    	}
+    	
     	return open_contests;
     }
     
@@ -169,6 +177,27 @@ public class userDAO
     		contestant_list.add(contestant);
     	}
     	return contestant_list;
+    }
+    
+    public Contest getContestbyID(String contestID) throws SQLException {
+    	String sql = "Select * from contest where contest_id = " + contestID;
+    	connect_func();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	Contest contest = new Contest("", "");
+    	while (resultSet.next()) {
+    		String contest_id = resultSet.getString("contest_id");
+    		String sponsor_id = resultSet.getString("sponsor_id");
+    		String title = resultSet.getString("title");
+    		LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
+    		System.out.println(begin_time);
+    		LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
+    		String status = resultSet.getString("status");
+    		String requirement_list = resultSet.getString("requirement_list");
+    		long sponsor_fee = resultSet.getLong("sponsor_fee");
+    		contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee); 
+    	}
+    	return contest;
     }
     
     
@@ -252,8 +281,9 @@ public class userDAO
     	String sql = "select judge_id from judge where login_id = ?";
     	String judgeID = "";
     	connect_func();
-    	statement = (Statement) connect.createStatement();
-    	ResultSet resultSet = statement.executeQuery(sql);
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, loginID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
     	
     	while (resultSet.next()) {
     		judgeID = resultSet.getString("judge_id");
@@ -262,11 +292,42 @@ public class userDAO
     	return judgeID;
     }
     
-  
+    protected String getSponsorIDByLoginID(String loginID) throws SQLException {
+    	String sql = "select sponsor_id from sponsor where login_id = ?";
+    	String sponsorID = "";
+    	connect_func();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, loginID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	
+    	while (resultSet.next()) {
+    		sponsorID = resultSet.getString("sponsor_id");
+    	}
+    	
+    	return sponsorID;
+    }
+    
+    protected Contestant getContestantByLoginID(String loginID) throws SQLException {
+    	String sql = "select * from contestant where login_id = ?";
+    	String contestantID = "";
+    	connect_func();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, loginID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	Contestant contestant = new Contestant();
+    	while (resultSet.next()) {
+    		contestantID = resultSet.getString("contestant_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		contestant = new Contestant(contestantID, loginID, balance, password);
+    	}
+    	
+    	return contestant;
+    }
     
     public void createContest(Contest contest, String[] selectJudges) throws SQLException {
-    	String sql = "insert into contest (contest_id, sponsor_id, title, begin_time, end_time,"
-    			+ "status, requirement_list, sponsor_fee) values (?, ? ,?, ?, ?, ?, ?, ?)" ;
+    	String sql = "insert into contest (contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee) "
+    			+ "values (?, ? ,?, ?, ?, ?, ?, ?);" ;
     	connect_func();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, contest.contest_id);
@@ -278,18 +339,31 @@ public class userDAO
     	preparedStatement.setString(7, contest.requirement_list);
     	preparedStatement.setLong(8, contest.sponsor_fee);
     	preparedStatement.executeUpdate();
-        preparedStatement.close();
+        preparedStatement.close(); 
+        
+        System.out.println(sql);
+    }
+    
+    public void insertJudgeby(Contest contest, String[] selectJudges) throws SQLException {
+         
+            	
+        
         
         for (String judge_userID : selectJudges) {
+        	String insert_judgeby_sql = "insert into judgeby (contest_id, judge_id) values";
         	String[] splited = judge_userID.split("\\s+");
         	String judge_id = getJudgeIDByLoginID(splited[0]);
-        	String sql_judgeby = "insert into judgeby (contest_id, judge_id, 0) values (" 
-        	+ contest.contest_id + ", " + judge_id + ")";
+        	
+        	insert_judgeby_sql += " (" 
+        	+ "'" + contest.contest_id +  "'" + ", " + "'" + judge_id + "'"+ ");";
+//        	
+        	System.out.println(insert_judgeby_sql);
+        	statement = (Statement) connect.createStatement();
+        	statement.executeUpdate(insert_judgeby_sql);
         	
         }
         
-    	
-    	
+        
     }
     
     public void insert(User users, String role) throws SQLException {
@@ -444,7 +518,7 @@ public class userDAO
     
     
     
-    public boolean isValid(String wallet_address, String password, String role) throws SQLException
+    public boolean isValid(String user_id, String password, String role) throws SQLException
     {
     	String sql = "SELECT * FROM " + role;
     	connect_func();
@@ -459,7 +533,7 @@ public class userDAO
     	for(int i = 0; i < setSize; i++)
     	{
     		resultSet.next();
-    		if(resultSet.getString(role + "_id").equals(wallet_address) && resultSet.getString("password").equals(password)) {
+    		if(resultSet.getString("login_id").equals(user_id) && resultSet.getString("password").equals(password)) {
     			return true;
     		}		
     	}

@@ -90,13 +90,14 @@
 </head>
 <body>
 	<div class="container">
-		<h1>Welcome Sponsor ${userID} </h1>
+		<h1>Welcome Sponsor </h1>
+		<h5>${userID} </h5>
 		<div class="form-field">
 			
 			<input type="hidden" id="userID" name="userID" value="${userID}" >
 		</div>
 		<div class="form-field">
-			<a href="create" class="btn">Create Contest</a>
+			<a href="create?sponsor_id=${userID}" class="btn">Create Contest</a>
 		</div>
 		<h2>Your Contests:</h2>
 		<ul class="contest-list">

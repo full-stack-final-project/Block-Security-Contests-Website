@@ -79,7 +79,7 @@
 <body>
 	<div class="container">
 		<h1>Contestant Page</h1>
-		<p><strong>User ID:</strong> ${userID}</p>
+		
 		<p><strong>Wallet Address:</strong> ${walletAddress}</p>
 		<p><strong>Balance:</strong> ${balance}</p>
 		<table>
@@ -94,10 +94,10 @@
 			<tbody>
 				<c:forEach var="contest" items="${contests}">
 					<tr>
-						<td><a href="contest.jsp?id=${contest.id}">${contest.name}</a></td>
-						<td>${contest.beginTime}</td>
-						<td>${contest.endTime}</td>
-						<td><a href="contest.jsp?userID=${userID}&contestID=${contest.id}">Details</a></td>
+						<td><a href="contest.jsp?id=${contest.id}">${contest.title}</a></td>
+						<td>${contest.getBeginTime()}</td>
+						<td>${contest.getEndTime()}</td>
+						<td><a href="contestDetails?id=${contest.getContestID()}&userID=${userID}">Details</a></td>
 					</tr>
 				</c:forEach>
 			</tbody>

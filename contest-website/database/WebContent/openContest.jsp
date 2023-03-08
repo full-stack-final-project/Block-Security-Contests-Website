@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -69,25 +70,7 @@
 			text-decoration: none;
 		}
 	</style>
-</head>
-<body>
-	<div class="search-container">
-		<input type="text" id="search-box" class="search-box" placeholder="Search contests">
-		<button onclick="searchContests()" class="search-button">Search</button>
-	</div>
-	
-	<div class="contest-list">
-		<div class="contest-header">All Contests</div>
-		<c:forEach items="${contests}" var="contest">
-			<div class="contest-item">
-				<div class="contest-name">${contest.name}</div>
-				<div class="contest-dates">${contest.beginDate} - ${contest.endDate}</div>
-				<a href="contestDetails?id=${contest.id}" class="contest-link">Details</a>
-			</div>
-		</c:forEach>
-	</div>
-	
-	<script>
+		<script>
 		// Search function
 		function searchContests() {
 			var input, filter, contestList, contests, contestName, i;
@@ -104,4 +87,26 @@
 				}
 			}
 		}
-	</
+		</script>
+</head>
+<body>
+	<div class="search-container">
+		<input type="text" id="search-box" class="search-box" placeholder="Search contests">
+		<button onclick="searchContests()" class="search-button">Search</button>
+	</div>
+	
+	<div class="contest-list">
+	<input type="hidden" id="contestantID" name="contestantID" value=${contestantID}>
+		<div class="contest-header">All Contests</div>
+		<c:forEach items="${contests}" var="contest">
+			<div class="contest-item">
+				<div class="contest-name">${contest.title}</div>
+				<div class="contest-dates">${contest.getBeginTime()} - ${contest.getEndTime()}</div>
+				<a href="contestDetails?id=${contest.getContestID()}" class="contest-link">Details</a>
+				
+			</div>
+		</c:forEach>
+	</div>
+</body>	
+</html>
+	
