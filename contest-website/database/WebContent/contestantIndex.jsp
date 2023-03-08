@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -94,10 +95,10 @@
 			<tbody>
 				<c:forEach var="contest" items="${contests}">
 					<tr>
-						<td><a href="contest.jsp?id=${contest.id}">${contest.title}</a></td>
+						<td>${contest.getTitle()}</td>
 						<td>${contest.getBeginTime()}</td>
 						<td>${contest.getEndTime()}</td>
-						<td><a href="contestDetails?id=${contest.getContestID()}&userID=${userID}">Details</a></td>
+						<td><a href="contestDetails?id=${contest.getContestID()}&userID=${walletAddress}">Details</a></td>
 					</tr>
 				</c:forEach>
 			</tbody>

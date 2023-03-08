@@ -47,13 +47,13 @@
 </head>
 <body>
     <div class="container">
-        <div class="title"><%= request.getAttribute("contestName") %></div>
-        <div class="info">Begin time: <%= request.getAttribute("beginTime") %></div>
-        <div class="info">End time: <%= request.getAttribute("endTime") %></div>
-        <div class="description"><%= request.getAttribute("requirements") %></div>
-       <form action="submit" method="post">
+        <div class="title">${contestName}</div>
+        <div class="info">Begin time: ${beginTime}</div>
+        <div class="info">End time: ${endTime}</div>
+        <div class="description">${requirements}</div>
+       <form action="submitpage" method="post">
             <input type="hidden" name="userID" value="${userID}" />
-            <input type="hidden" name="contestID" value="${contest.contestID}" />
+            <input type="hidden" name="contestID" value="${contestID}" />
             <button type="submit" class="button">Submit Contest</button>
         </form>
     </div>
