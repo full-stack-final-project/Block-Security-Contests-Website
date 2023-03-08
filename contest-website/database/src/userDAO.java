@@ -38,7 +38,7 @@ public class userDAO
 	/** 
 	 * @see HttpServlet#HttpServlet()
      */
-    protected void connect_func() throws SQLException {
+    protected void connectFunc() throws SQLException {
     	//uses default connection to the database
         if (connect == null || connect.isClosed()) {
             try {
@@ -53,7 +53,7 @@ public class userDAO
     
     public boolean database_login(String email, String password) throws SQLException{
     	try {
-    		connect_func("root","root");
+    		connectFunc("root","root");
     		String sql = "select * from user where email = ?";
     		preparedStatement = connect.prepareStatement(sql);
     		preparedStatement.setString(1, email);
@@ -66,7 +66,7 @@ public class userDAO
     	}
     }
 	//connect to the database 
-    public void connect_func(String username, String password) throws SQLException {
+    public void connectFunc(String username, String password) throws SQLException {
         if (connect == null || connect.isClosed()) {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -119,7 +119,7 @@ public class userDAO
     public List<String> listJudgesName() throws SQLException{
     	List<String> judgesName = new ArrayList<String>();
     	String sql = "Select login_id, avg_score from judge;";
-    	connect_func();
+    	connectFunc();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
     	while (resultSet.next()) {
@@ -134,38 +134,37 @@ public class userDAO
     }
     
     public List<Contest> getOpenContests() throws SQLException{
-    	List<Contest> open_contests = new ArrayList<Contest>();
+    	List<Contest> openContests = new ArrayList<Contest>();
     	String sql = "Select * from contest where status = 'opened';";
-    	connect_func();
+    	connectFunc();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
-    	Contest opened_contest;
+    	Contest openedContest;
     	
     	while (resultSet.next()) {
-    		String contest_id = resultSet.getString("contest_id");
-    		String sponsor_id = resultSet.getString("sponsor_id");
+    		String contestID = resultSet.getString("contest_id");
+    		String sponsorID = resultSet.getString("sponsor_id");
     		String title = resultSet.getString("title");
-    		LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
-    		System.out.println(begin_time);
-    		LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
+    		LocalDateTime beginTime = resultSet.getObject("begin_time", LocalDateTime.class);
+    		LocalDateTime endTime = resultSet.getObject("end_time", LocalDateTime.class);
     		String status = resultSet.getString("status");
-    		String requirement_list = resultSet.getString("requirement_list");
-    		long sponsor_fee = resultSet.getLong("sponsor_fee");
-    		opened_contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee);
-    		open_contests.add(opened_contest);
+    		String requirementList = resultSet.getString("requirement_list");
+    		long sponsorFee = resultSet.getLong("sponsor_fee");
+    		openedContest = new Contest(contestID, sponsorID, title, beginTime, endTime, status, requirementList, sponsorFee);
+    		openContests.add(openedContest);
     	}
     	
-    	for (Contest c : open_contests) {
+    	for (Contest c : openContests) {
     		System.out.println(c.begin_time);
     	}
     	
-    	return open_contests;
+    	return openContests;
     }
     
     public List<Contestant> rankContestants() throws SQLException{
     	List<Contestant> contestant_list = new ArrayList<Contestant>();
     	String sql = "select * from contestant order by reward_balance desc;";
-    	connect_func();
+    	connectFunc();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
     	while (resultSet.next()) {
@@ -180,23 +179,24 @@ public class userDAO
     }
     
     public Contest getContestbyID(String contestID) throws SQLException {
-    	String sql = "Select * from contest where contest_id = " + contestID;
-    	connect_func();
+    	String sql = "Select * from contest where contest_id = '" + contestID + "';";
+    	System.out.println(sql);
+    	connectFunc();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
-    	Contest contest = new Contest("", "");
-    	while (resultSet.next()) {
-    		String contest_id = resultSet.getString("contest_id");
-    		String sponsor_id = resultSet.getString("sponsor_id");
-    		String title = resultSet.getString("title");
-    		LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
-    		System.out.println(begin_time);
-    		LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
-    		String status = resultSet.getString("status");
-    		String requirement_list = resultSet.getString("requirement_list");
-    		long sponsor_fee = resultSet.getLong("sponsor_fee");
-    		contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee); 
-    	}
+    	resultSet.next();
+    	
+    	String contest_id = resultSet.getString("contest_id");
+    	String sponsor_id = resultSet.getString("sponsor_id");
+    	String title = resultSet.getString("title");
+    	LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
+    	System.out.println(begin_time);
+    	LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
+    	String status = resultSet.getString("status");
+    	String requirement_list = resultSet.getString("requirement_list");
+    	long sponsor_fee = resultSet.getLong("sponsor_fee");
+    	Contest contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee); 
+    	
     	return contest;
     }
     
@@ -204,7 +204,7 @@ public class userDAO
     
     public List<Object> sponsor_contests(String sponsor_ID) throws SQLException{
     	List<Object> list = new ArrayList<Object>();
-    	connect_func();
+    	connectFunc();
     	String sql_find_sponsor = "select * from sponsor where sponsor_id = ?";
     	preparedStatement = connect.prepareStatement(sql_find_sponsor);
     	preparedStatement.setString(1, sponsor_ID);
@@ -257,7 +257,7 @@ public class userDAO
     			+ "		from contest\r\n"
     			+ "		group by sponsor_id) groupby_sponsor \r\n"
     			+ ") ) ;";
-    	connect_func();
+    	connectFunc();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
  
@@ -280,7 +280,7 @@ public class userDAO
     protected String getJudgeIDByLoginID(String loginID) throws SQLException {
     	String sql = "select judge_id from judge where login_id = ?";
     	String judgeID = "";
-    	connect_func();
+    	connectFunc();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, loginID);
     	ResultSet resultSet = preparedStatement.executeQuery();
@@ -295,7 +295,7 @@ public class userDAO
     protected String getSponsorIDByLoginID(String loginID) throws SQLException {
     	String sql = "select sponsor_id from sponsor where login_id = ?";
     	String sponsorID = "";
-    	connect_func();
+    	connectFunc();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, loginID);
     	ResultSet resultSet = preparedStatement.executeQuery();
@@ -310,7 +310,7 @@ public class userDAO
     protected Contestant getContestantByLoginID(String loginID) throws SQLException {
     	String sql = "select * from contestant where login_id = ?";
     	String contestantID = "";
-    	connect_func();
+    	connectFunc();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, loginID);
     	ResultSet resultSet = preparedStatement.executeQuery();
@@ -325,10 +325,41 @@ public class userDAO
     	return contestant;
     }
     
+    protected List<Contest> getContestsParticipated(String contestantID) throws SQLException {
+    	String sql = "select contest.*\r\n"
+    			+ "from (\r\n"
+    			+ "	(select contest_id from participate where contestant_id = ?) t1\r\n"
+    			+ "    left join contest\r\n"
+    			+ "    on contest.contest_id = t1.contest_id\r\n"
+    			+ ");";
+    	connectFunc();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, contestantID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	List<Contest> contests = new ArrayList<Contest>();
+    	Contest contestObj;
+    	while (resultSet.next()) {
+    		String contestID = resultSet.getString("contest_id");
+    		String sponsorID = resultSet.getString("sponsor_id");
+    		String title = resultSet.getString("title");
+    		LocalDateTime beginTime = resultSet.getObject("begin_time", LocalDateTime.class);
+    		LocalDateTime endTime = resultSet.getObject("end_time", LocalDateTime.class);
+    		String status = resultSet.getString("status");
+    		String requirementList = resultSet.getString("requirement_list");
+    		long sponsorFee = resultSet.getLong("sponsor_fee");
+    		contestObj = new Contest(contestID, sponsorID, title, beginTime, endTime, status, requirementList, sponsorFee); 
+    		System.out.println(contestObj.getTitle());
+    		contests.add(contestObj);
+    	}
+    	
+    	return contests;
+    			
+    }
+    
     public void createContest(Contest contest, String[] selectJudges) throws SQLException {
     	String sql = "insert into contest (contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee) "
     			+ "values (?, ? ,?, ?, ?, ?, ?, ?);" ;
-    	connect_func();
+    	connectFunc();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
     	preparedStatement.setString(1, contest.contest_id);
     	preparedStatement.setString(2, contest.sponsor_id);
@@ -367,7 +398,7 @@ public class userDAO
     }
     
     public void insert(User users, String role) throws SQLException {
-    	connect_func();         
+    	connectFunc();         
 		String sql = "insert into " + role + "(" + role + "_id, password) values (?, ?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 		preparedStatement.setString(1, users.getId());
@@ -391,7 +422,7 @@ public class userDAO
     
     public boolean delete(String email) throws SQLException {
         String sql = "DELETE FROM User WHERE email = ?";        
-        connect_func();
+        connectFunc();
          
         preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, email);
@@ -459,7 +490,7 @@ public class userDAO
     	boolean checks = true;
     	String sql = "SELECT * From " + role + "  WHERE " +  role + "_id = ?";
     	System.out.print(sql);
-    	connect_func();
+    	connectFunc();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, wallet_address);
         System.out.print(sql);
@@ -482,7 +513,7 @@ public class userDAO
     	boolean checks = true;
     	String sql = "SELECT * From " + role + "  WHERE " +  "login_id = ?";
     	System.out.print(sql);
-    	connect_func();
+    	connectFunc();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, userID);
         System.out.print(sql);
@@ -501,7 +532,7 @@ public class userDAO
     public boolean checkPassword(String password) throws SQLException {
     	boolean checks = false;
     	String sql = "SELECT * FROM User WHERE password = ?";
-    	connect_func();
+    	connectFunc();
     	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
         preparedStatement.setString(1, password);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -521,7 +552,7 @@ public class userDAO
     public boolean isValid(String user_id, String password, String role) throws SQLException
     {
     	String sql = "SELECT * FROM " + role;
-    	connect_func();
+    	connectFunc();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
     	
@@ -542,7 +573,7 @@ public class userDAO
     
     
     public void init() throws SQLException, FileNotFoundException, IOException{
-    	connect_func();
+    	connectFunc();
         statement =  (Statement) connect.createStatement();
         
         String[] INITIAL = {"drop database if exists contestdb; ",
