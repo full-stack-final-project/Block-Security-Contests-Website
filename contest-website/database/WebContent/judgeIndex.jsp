@@ -81,7 +81,7 @@
 						<td><a href="contest.jsp?id=${ contest.getId() }">${contest.getName() }</a></td>
 						<td>${ contest.begin_time}</td>
 						<td>${ contest.end_time}</td>
-						<td><a href="score.jsp?judgeId=${userID}&amp;contestId=${contest.getId()}">Score</a></td>
+						<td><a href="score?judgeId=${userID}&amp&contestId=${contest.getId()}">Score</a></td>
 					</tr>
 				</c:forEach>
 			</tbody>

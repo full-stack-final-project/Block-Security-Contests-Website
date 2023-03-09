@@ -83,6 +83,8 @@
 		
 		<p><strong>Wallet Address:</strong> ${walletAddress}</p>
 		<p><strong>Balance:</strong> ${balance}</p>
+		<p><strong>Contests you participated </strong></p>
+		<a href="openContest?id=${walletAddress}">All open contests</a>
 		<table>
 			<thead>
 				<tr>

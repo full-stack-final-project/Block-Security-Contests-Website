@@ -102,7 +102,7 @@
 		<h2>Your Contests:</h2>
 		<ul class="contest-list">
 			<c:forEach items="${contestList}" var="contest">
-				<li><a href="contestDetails.jsp?id=${contest.id}">${contest.title}</a></li>
+				<li><a href="contestDetailsSponsor?id=${contest.getContestID()}&userID=${userID}">Click to see more details about ${contest.getTitle()}</a></li>
 			</c:forEach>
 		</ul>
 	</div>

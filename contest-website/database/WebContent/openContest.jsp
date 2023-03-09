@@ -102,7 +102,7 @@
 			<div class="contest-item">
 				<div class="contest-name">${contest.title}</div>
 				<div class="contest-dates">${contest.getBeginTime()} - ${contest.getEndTime()}</div>
-				<a href="contestDetails?id=${contest.getContestID()}" class="contest-link">Details</a>
+				<a href="contestDetails?id=${contest.getContestID()}&userID=${contestantID}" class="contest-link">Details</a>
 				
 			</div>
 		</c:forEach>
