@@ -376,10 +376,6 @@ public class userDAO
     }
     
     public void insertJudgeby(Contest contest, String[] selectJudges) throws SQLException {
-         
-            	
-        
-        
         for (String judge_userID : selectJudges) {
         	String insert_judgeby_sql = "insert into judgeby (contest_id, judge_id) values";
         	String[] splited = judge_userID.split("\\s+");
@@ -387,15 +383,103 @@ public class userDAO
         	
         	insert_judgeby_sql += " (" 
         	+ "'" + contest.contest_id +  "'" + ", " + "'" + judge_id + "'"+ ");";
-//        	
         	System.out.println(insert_judgeby_sql);
         	statement = (Statement) connect.createStatement();
         	statement.executeUpdate(insert_judgeby_sql);
-        	
         }
-        
-        
     }
+    
+//    Distributed rewards.
+    public void distributedRewardsToJudges(Contest contest) throws SQLException {
+    	connectFunc();
+    	String getJudgesCount = "select count(*) as judgeCount from judgeby where contest_id = '" + contest.getContestID() + "';"; 
+    	String getJudgesInfo = "select judge.* from\r\n"
+    			+ "((select judge_id from judgeby where contest_id = '" + contest.getContestID() + "') filtered_judges\r\n"
+    			+ "join judge \r\n"
+    			+ "on filtered_judges.judge_id = judge.judge_id);";
+    	long sponsor_fee = contest.getSponsorFee();
+    	double judgeTotalRewards = sponsor_fee * 0.2;
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(getJudgesCount);
+    	resultSet.next();
+    	int judgeCount = resultSet.getInt("judgeCount");
+    	float perJudgeReward = (float)(judgeTotalRewards / judgeCount);
+    	
+    	String[] insertJudgeByStatements = new String[judgeCount];
+    	String[] updateJudgeStatements = new String[judgeCount];
+    	int curIndex = 0;
+    	
+    	resultSet = statement.executeQuery(getJudgesInfo);
+    	String curJudgeID;
+    	float curRewardBalance;
+    	while (resultSet.next()) {
+    		curJudgeID = resultSet.getString("judge_id");
+    		curRewardBalance = resultSet.getFloat("reward_balance");
+    		
+    		insertJudgeByStatements[curIndex] = "UPDATE judgeby\r\n"
+    				+ "SET judge_reward = '" + perJudgeReward + "'\r\n"
+    				+ "WHERE contest_id = '" + contest.getContestID() + "' AND judge_id = '" + curJudgeID + "';";
+    		updateJudgeStatements[curIndex] = "Update judge set reward_balance = '" + (curRewardBalance + perJudgeReward) + "'\r\n"
+    				+ "where judge_id = '" + curJudgeID + "';";	
+    		curIndex += 1;
+    	}        
+    	statement.close();
+    	
+    	for (int i = 0; i < judgeCount; i++) {
+    		statement.execute(insertJudgeByStatements[i]);
+    		statement.execute(updateJudgeStatements[i]);
+    	}	
+    }
+    
+    public void distributedRewardsToContestants(Contest contest) throws SQLException {
+    	connectFunc();
+    	String getCountAndScores = "select count(*) as contestantsCount, sum(score) as totalScore from grade where contest_id = '" + contest.getContestID() + "';"; 
+    	String getContestantsInfo = "select contestant.*, filtered_contestants.score as score from "
+    			+ "((select contestant_id, score from grade where contest_id = '" + contest.getContestID() + "') filtered_contestants\r\n"
+    			+ "join contestant \r\n"
+    			+ "on filtered_contestants.contestant_id = contestant.contestant_id);";
+    	long sponsor_fee = contest.getSponsorFee();
+    	float judgeTotalRewards = (float)(sponsor_fee * 0.8);
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(getCountAndScores);
+    	resultSet.next();
+    	int contestantsCount = resultSet.getInt("contestantsCount");
+    	int contestTotalScore = resultSet.getInt("totalScore");
+    	
+    	String[] insertParticipateStatements = new String[contestantsCount];
+    	String[] updateContestantStatements = new String[contestantsCount];
+    	int curIndex = 0;
+    	
+    	resultSet = statement.executeQuery(getContestantsInfo);
+    	String curContestantID;
+    	float curRewardBalance, distributedReward;
+    	int score;
+    	while (resultSet.next()) {
+    		curContestantID = resultSet.getString("contestant_id");
+    		curRewardBalance = resultSet.getFloat("reward_balance");
+    		score = resultSet.getInt("score");
+    		distributedReward = judgeTotalRewards * score / contestTotalScore;
+    		
+    		insertParticipateStatements[curIndex] = "UPDATE participate\r\n"
+    				+ "SET contestant_reward = '" + distributedReward + "'\r\n"
+    				+ "WHERE contest_id = '" + contest.getContestID() + "' AND contestant_id = '" + curContestantID + "';";
+    		updateContestantStatements[curIndex] = "Update contestant set reward_balance = '" + (curRewardBalance + distributedReward) + "'\r\n"
+    				+ "where contestant_id = '" + curContestantID + "';";	
+    		curIndex += 1;
+    	}        
+    	statement.close();
+    	
+    	for (int i = 0; i < contestantsCount; i++) {
+    		statement.execute(insertParticipateStatements[i]);
+    		statement.execute(updateContestantStatements[i]);
+    	}
+    	
+    }
+    
+    
+    
+    
+    
     
     public void insert(User users, String role) throws SQLException {
     	connectFunc();         
