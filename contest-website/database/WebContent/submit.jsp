@@ -53,8 +53,8 @@
 </head>
 <body>
 	
-	<form method="post" action="submit">
-		<label for="context">Please submit your context here for this contest${contestName} :</label>
+	<form method="post" action="submitContest">
+		<label for="context">Please submit your context here for this contest ${contestName} :</label>
 		<textarea id="context" name="context"></textarea>
 		<input type="hidden" id="userID" name="userID" value="${userID}" />
 		<input type="hidden" id="contestID" name="contestID" value="${contestID}" />

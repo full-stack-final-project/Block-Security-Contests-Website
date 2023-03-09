@@ -20,6 +20,11 @@ public class Sponsor extends User{
     }
     
    //getter and setter methods
+    
+    public String getID() {
+        return this.id;
+    }
+    
     public String getCompanyName() {
         return this.company_name;
     }

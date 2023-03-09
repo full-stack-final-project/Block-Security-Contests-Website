@@ -200,10 +200,19 @@ public class userDAO
     	return contest;
     }
     
+    public boolean insertSubmission(String contestID, String contestantID, String submission) throws SQLException {
+    	String sql = "Insert into participate (contestant_id, contest_id, submission) " 
+    			+ "VALUE ( '" + contestantID + "', '" + contestID + "', '" + submission + "') " 
+    			+ "ON DUPLICATE KEY UPDATE "
+    			+ "submission = '"+ submission + "';";
+    	System.out.println(sql);
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	boolean resultSet = statement.executeUpdate(sql) > 0;
+    	return resultSet;
+    }
     
-    
-    public List<Object> sponsor_contests(String sponsor_ID) throws SQLException{
-    	List<Object> list = new ArrayList<Object>();
+    public Sponsor getSponsorbyID(String sponsor_ID) throws SQLException {
     	connectFunc();
     	String sql_find_sponsor = "select * from sponsor where sponsor_id = ?";
     	preparedStatement = connect.prepareStatement(sql_find_sponsor);
@@ -218,7 +227,27 @@ public class userDAO
 		String password = resultSet.getString("password");
 		long balance = resultSet.getLong("address");
 		Sponsor sponsor = new Sponsor(sponsor_id, login_id, company_name, email, address, password, balance);
-    	list.add(sponsor);
+		return sponsor;
+    }
+    
+    
+    public List<Contest> sponsor_contests(String sponsor_ID) throws SQLException{
+    	List<Contest> list = new ArrayList<Contest>();
+//    	connectFunc();
+//    	String sql_find_sponsor = "select * from sponsor where sponsor_id = ?";
+//    	preparedStatement = connect.prepareStatement(sql_find_sponsor);
+//    	preparedStatement.setString(1, sponsor_ID);
+//    	ResultSet resultSet = preparedStatement.executeQuery();
+//    	resultSet.next();
+//		String sponsor_id = resultSet.getString("sponsor_id");
+//		String login_id = resultSet.getString("login_id");
+//		String company_name = resultSet.getString("company_name");
+//		String email = resultSet.getString("email");
+//		String address = resultSet.getString("address");
+//		String password = resultSet.getString("password");
+//		long balance = resultSet.getLong("address");
+//		Sponsor sponsor = new Sponsor(sponsor_id, login_id, company_name, email, address, password, balance);
+//    	
     	
     	String sql_find_contests = "select * from contest\r\n"
     			+ "where sponsor_id = ? and status in ('opened', 'past')\r\n"
@@ -226,12 +255,12 @@ public class userDAO
     	preparedStatement = connect.prepareStatement(sql_find_contests);
     	preparedStatement.setString(1, sponsor_ID);
     	resultSet = preparedStatement.executeQuery();
-    	if (!resultSet.next()) {
-    		System.out.println("This sponsor has not sponsored any contests yet.");
-    	}else {
+//    	if (!resultSet.next()) {
+//    		System.out.println("This sponsor has not sponsored any contests yet.");
+//    	}else {
     		while (resultSet.next()) {
     			String contest_id = resultSet.getString("contest_id");
-    			sponsor_id = resultSet.getString("sponsor_id");
+    			String sponsor_id = resultSet.getString("sponsor_id");
     			String title = resultSet.getString("title");
     			LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
         		LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
@@ -241,7 +270,7 @@ public class userDAO
         		Contest sponsored_contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee);
         		list.add(sponsored_contest);
     		}
-    	}
+//    	}
     	return list;
     }
     
@@ -317,6 +346,24 @@ public class userDAO
     	Contestant contestant = new Contestant();
     	while (resultSet.next()) {
     		contestantID = resultSet.getString("contestant_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		contestant = new Contestant(contestantID, loginID, balance, password);
+    	}
+    	
+    	return contestant;
+    }
+    
+    protected Contestant getContestantByID(String contestantID) throws SQLException {
+    	String sql = "select * from contestant where contestant_id = ?";
+    	
+    	connectFunc();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, contestantID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	Contestant contestant = new Contestant();
+    	while (resultSet.next()) {
+    		String loginID = resultSet.getString("login_id");
     		float balance = resultSet.getFloat("reward_balance");
     		String password = resultSet.getString("password");
     		contestant = new Contestant(contestantID, loginID, balance, password);

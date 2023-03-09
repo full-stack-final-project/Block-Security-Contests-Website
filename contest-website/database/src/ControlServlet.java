@@ -84,6 +84,15 @@ public class ControlServlet extends HttpServlet {
         	case "/contestDetails":
         		contestDetails(request, response);
         		break;
+        	case "/submitpage":
+        		submitpage(request, response);
+        		break;
+        	case "/submitContest":
+        		submitContest(request, response);
+        		break;
+        	case "/contestDetailsSponsor":
+        		contestDetailsSponsor(request, response);
+        		break;
         	
 	    	}
 	    }
@@ -110,6 +119,47 @@ public class ControlServlet extends HttpServlet {
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
 //	    	request.setAttribute("resStr","You just initialized the database. You can review the whole database through Workbench now");
 	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
+	    }
+	    
+	    protected void submitContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	String submission = request.getParameter("context");
+	    	String contestantID = request.getParameter("userID");
+	    	String contestID = request.getParameter("contestID");
+	    	if (userDAO.insertSubmission(contestID, contestantID, submission)) {
+	    		Contestant contestant = userDAO.getContestantByID(contestantID);
+	    		 request.setAttribute("walletAddress", contestant.id);
+	    		 request.setAttribute("balance", contestant.reward_balance);
+	    		 List<Contest> contests = userDAO.getContestsParticipated(contestant.id);
+	    		 request.setAttribute("contests", contests);
+	    		 
+	    		 request.getRequestDispatcher("contestantIndex.jsp").forward(request, response);
+	    	}
+	    }
+	    
+	    protected void submitpage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestID = request.getParameter("contestID");
+	    	String contestantID = request.getParameter("userID");
+	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	request.setAttribute("contestName", contest.getTitle());
+	    	request.setAttribute("userID", contestantID);
+	    	request.setAttribute("contestID", contestID);
+	    	RequestDispatcher rd = request.getRequestDispatcher("submit.jsp");
+	    	rd.forward(request, response);
+	    }
+	    
+	    protected void contestDetailsSponsor(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestID = request.getParameter("id");
+	    	String sponsorID = request.getParameter("userID");
+	    	System.out.println(contestID);
+	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	request.setAttribute("contestName", contest.getTitle());
+	    	request.setAttribute("beginTime", contest.getBeginTime());
+	    	request.setAttribute("endTime", contest.getEndTime());
+	    	request.setAttribute("requirements", contest.getRequirementList());
+	    	request.setAttribute("userID", sponsorID);
+	    	request.setAttribute("contestID", contest.getContestID());
+	    	RequestDispatcher rd = request.getRequestDispatcher("contestSponsor.jsp");
+	    	rd.forward(request, response);
 	    }
 	    
 	    protected void contestDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -199,8 +249,9 @@ public class ControlServlet extends HttpServlet {
 	    	 }
 	    	 else if (role.equals("sponsor") && userDAO.isValid(userID, password, role)) {
 	    		 //request.setAttribute("resStr","Logging in successfully as the sponsor user");
-	    		 Contest[] contest_list = new Contest[100];
+	    		 
 	    		 String sponsor_id = userDAO.getSponsorIDByLoginID(userID);
+	    		 List<Contest> contest_list = userDAO.sponsor_contests(sponsor_id);
 	    		 request.setAttribute("userID", sponsor_id);
 	    		 request.setAttribute("contestList", contest_list);
 		   	 	 request.getRequestDispatcher("sponsorIndex.jsp").forward(request, response);
