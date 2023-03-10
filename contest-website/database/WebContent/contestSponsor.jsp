@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,8 +62,13 @@
             <input type="hidden" name="contestID" value="${contestID}" />
             
         </form>
-        <a href="distributeSubmission?id=${contestID}">Distribute submissions to judges</a><br>
-        <a href="distributeBonus?id=${contestID}">Distribute bonus</a>
+
+        <c:if test="${status == 'closed'}">
+        	<a href="distributeSubmission?id=${contestID}">Distribute submissions to judges</a><br>
+        	<a href="distributeBonus?id=${contestID}">Distribute bonus</a>
+        </c:if>
+        
+
     </div>
 </body>
 </html>
