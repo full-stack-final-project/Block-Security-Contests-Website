@@ -436,6 +436,53 @@ public class userDAO
         }
     }
     
+    // Assign submissions to judges
+    public void assignSubmissionsToJudges(Contest contest) throws SQLException{
+    	connectFunc();
+    	String getJudgesList = "select judge_id from judgeby where contest_id = '"+ contest.getContestID() + "';"; 
+    	String getJudgesCount = "select count(*) as judgesCount from judgeby where contest_id = '"+ contest.getContestID() + "';"; 
+    	String getContestantsList = "select contestant_id from participate where contest_id = '"+ contest.getContestID() + "';"; 
+    	String getContestantsCount = "select count(*) as contestantsCount from participate where contest_id = '"+ contest.getContestID() + "';"; 
+    	
+    	// get judges count and contestants count.
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(getJudgesCount);
+    	resultSet.next();
+    	int judgesCount = resultSet.getInt("judgesCount");
+    	resultSet = statement.executeQuery(getContestantsCount);
+    	int contestantsCount = resultSet.getInt("contestantsCount");
+    	
+    	// get judges ID and contestants ID
+    	resultSet = statement.executeQuery(getJudgesList);
+    	String[] judgesID = new String[judgesCount];
+    	int curIndex = 0;
+    	while (resultSet.next()) {
+    		judgesID[curIndex] = resultSet.getString("judge_id");
+    		curIndex += 1;
+    	}
+    	
+    	resultSet = statement.executeQuery(getContestantsList);
+    	String[] contestantsID = new String[contestantsCount];
+    	curIndex = 0;
+    	while (resultSet.next()) {
+    		contestantsID[curIndex] = resultSet.getString("contestant_id");
+    		curIndex += 1;
+    	}
+    	
+    	// assign submissions
+    	String insertIntoGrade = "INSERT INTO grade (contest_id, contestant_id, judge_id) VALUES (?, ?, ?);";
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(insertIntoGrade);
+    	for (int i = 0; i < contestantsCount; i ++) {
+    		preparedStatement.setString(1, contest.getContestID());
+    		preparedStatement.setString(2, contestantsID[i]);
+    		preparedStatement.setString(3,  judgesID[i % judgesCount]);
+    		preparedStatement.executeUpdate();
+    	}
+    	preparedStatement.close();
+    	System.out.println("Assigned submissions to judges successfully.");
+    	
+    }
+    
 //    Distributed rewards.
     public void distributedRewardsToJudges(Contest contest) throws SQLException {
     	connectFunc();
