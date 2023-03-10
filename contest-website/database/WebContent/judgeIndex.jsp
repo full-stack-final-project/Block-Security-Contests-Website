@@ -80,7 +80,7 @@
 				<c:forEach var="contest" items="${contests}">
 					<tr>
 
-						<td><a href="contestDetailsJudge?id=${contest.getContestID()}&judgeID=${userID}">${contest.getTitle() }</a></td>
+						<td><a href="contestDetailsJudge?id=${contest.getContestID()}&judgeID=${walletAddress}">${contest.getTitle() }</a></td>
 						<td>${ contest.getBeginTime()}</td>
 						<td>${ contest.getEndTime()}</td>
 						<td>${contest.getStatus() }</td>

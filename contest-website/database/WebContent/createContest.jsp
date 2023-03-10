@@ -109,7 +109,7 @@ function validateForm() {
 		<h1>Create Contest</h1>
 	</header>
 	<main>
-		<form method="post" action="createContest">
+		<form method="post" action="createContest" onsubmit=" return validateForm();">
 			<input type="hidden" id="sponsorID" name="sponsorID" value=${sponsor_id}>
 			<label for="title">Contest Title:</label><br><br>
 			<input type="text" id="title" name="title" required><br><br>
@@ -139,7 +139,7 @@ function validateForm() {
             <label for="requirement">Requirement list:</label><br><br>
             <textarea id="requirement" name="requirement"></textarea><br><br>
 
-			<input type="submit" id="submit" name="submit" value="Create Contest" onclick="validateForm()">
+			<input type="submit" id="submit" name="submit" value="Create Contest" >
 		</form>
 	</main>
 	

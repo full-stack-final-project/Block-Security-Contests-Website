@@ -53,10 +53,10 @@
 </head>
 <body>
 	
-	<form method="post" action="score">
+	<form method="post" action="submitScore">
 		<label for="context">Please score submission from ${contestantID}  for this contest :</label>
 		
-		<textarea disabled id="context" name="context" >${submissions}</textarea>
+		<textarea disabled id="context" name="context" >${submission}</textarea>
 		<label for="score">Score(100):</label>
 		<input type="number" id="score" name="score" min="1" max="100" required><br><br>
 

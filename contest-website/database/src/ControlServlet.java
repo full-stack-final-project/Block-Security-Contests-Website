@@ -96,14 +96,17 @@ public class ControlServlet extends HttpServlet {
         	case "/contestDetailsJudge":
         		contestDetailsJudge(request, response);
         		break;
-        	case "submitScore":
+        	case "/submitScore":
         		submitScore(request, response);
         		break;
-        	case "score":
+        	case "/score":
         		score(request, response);
-            break;
+        		break;
         	case "/distributeSubmission":
         		distributeSubmission(request, response);
+        		break;
+        	case "/distributeBonus":
+        		distributeRewards(request, response);
         		break;
 
 	    	}
@@ -135,14 +138,16 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    
 	    protected void submitScore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	System.out.println("Enter here.");
 	    	String contestID = request.getParameter("contestID");
 	    	String judgeID = request.getParameter("userID");
 	    	String contestantID = request.getParameter("contestantID");
 	    	String scoreStr = request.getParameter("score");
 	    	int score = Integer.parseInt(scoreStr);
-	    	if (userDAO.updateGrade(contestID, contestantID, score)) {
-	    		System.out.println("Updated the grade.");
-	    	}
+	    	userDAO.updateGrade(contestID, contestantID, score);
+//	    	if (userDAO.updateGrade(contestID, contestantID, score)) {
+//	    		System.out.println("Updated the grade.");
+//	    	}
 	    }
 
 	    protected void submitContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
@@ -209,13 +214,24 @@ public class ControlServlet extends HttpServlet {
 	    
 
 	    protected void distributeSubmission(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
-	    	System.out.println("Arrived here.");
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	userDAO.assignSubmissionsToJudges(contest);
 	    	request.setAttribute("contest", contest);
 	    	RequestDispatcher rd = request.getRequestDispatcher("assignSubmissions.jsp");
 	    	rd.forward(request, response);
+	    }
+	    
+	    
+	    protected void distributeRewards(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	System.out.println("START TO DISTRIBUTE");
+	    	String contestID = request.getParameter("id");
+	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	userDAO.distributedRewardsToJudges(contest);
+	    	userDAO.distributedRewardsToContestants(contest);
+//	    	request.setAttribute("contest", contest);
+//	    	RequestDispatcher rd = request.getRequestDispatcher("assignSubmissions.jsp");
+//	    	rd.forward(request, response);
 	    }
 
 	    protected void contestDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -267,13 +283,14 @@ public class ControlServlet extends HttpServlet {
 	    	String[] selectJudges = request.getParameterValues("judges");
 	    	String sponsor_id = request.getParameter("sponsorID");
 	    	
-	    	String requirment = request.getParameter("requirment");
+	    	String requirment = request.getParameter("requirement");
+	    	
 	    	Contest contest = new Contest(walletAddress, sponsor_id, contestName, begin_time, end_time, "created", requirment, fundingContest);
 	    	
 	    	userDAO.createContest(contest, selectJudges);
 	    	userDAO.insertJudgeby(contest, selectJudges);
 	    	
-	    	Contest[] contest_list = new Contest[100];
+	    	 List<Contest> contest_list = userDAO.sponsor_contests(sponsor_id);
    		 	request.setAttribute("userID", sponsor_id);
    		 	request.setAttribute("contestList", contest_list);
 	   	 	request.getRequestDispatcher("sponsorIndex.jsp").forward(request, response);
