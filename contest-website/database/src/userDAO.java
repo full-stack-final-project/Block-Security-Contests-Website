@@ -229,7 +229,7 @@ public class userDAO
 		Sponsor sponsor = new Sponsor(sponsor_id, login_id, company_name, email, address, password, balance);
 		return sponsor;
     }
-    
+
     
     public List<Contest> sponsor_contests(String sponsor_ID) throws SQLException{
     	List<Contest> list = new ArrayList<Contest>();
@@ -250,7 +250,7 @@ public class userDAO
 //    	
     	
     	String sql_find_contests = "select * from contest\r\n"
-    			+ "where sponsor_id = ? and status in ('opened', 'past')\r\n"
+    			+ "where sponsor_id = ? and status in ('opened', 'closed', 'past')\r\n"
     			+ "order by begin_time desc;";
     	preparedStatement = connect.prepareStatement(sql_find_contests);
     	preparedStatement.setString(1, sponsor_ID);
@@ -354,6 +354,28 @@ public class userDAO
     	return contestant;
     }
     
+    protected Judge getjudgeByLoginID(String loginID) throws SQLException {
+    	String sql = "select * from judge where login_id = ?";
+    	String judgeID = "";
+    	connectFunc();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, loginID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	Judge judge = new Judge();
+    	while (resultSet.next()) {
+    		judgeID = resultSet.getString("judge_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		float avg_score = resultSet.getFloat("avg_score");
+    		int review_num = resultSet.getInt("review_number");
+    		String password = resultSet.getString("password");
+    		
+    		judge = new Judge(judgeID, loginID, password, balance, avg_score, review_num);
+    	}
+    	
+    	return judge;
+    }
+    
+    
     protected Contestant getContestantByID(String contestantID) throws SQLException {
     	String sql = "select * from contestant where contestant_id = ?";
     	
@@ -372,6 +394,62 @@ public class userDAO
     	return contestant;
     }
     
+    public List<Contestant> getContestantsJudge(String contestID, String judgeID) throws SQLException {
+    	List<Contestant> contestantLoginIDs = new ArrayList<Contestant>();
+    	String sql = "select contestant.* "
+    			+ "from"
+    			+ "(select contestant_id from grade where judge_id = ? and contest_id = ?) t1 "
+    			+ "left join contestant "
+    			+ "on contestant.contestant_id = t1.contestant_id;";
+    	connectFunc();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, judgeID);
+    	preparedStatement.setString(2, contestID);
+    	
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	Contestant contestant = new Contestant();
+    	while (resultSet.next()) {
+    		String contestantID = resultSet.getString("contestant_id");
+    		String loginID = resultSet.getString("login_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		contestant = new Contestant(contestantID, loginID, balance, password);
+    		contestantLoginIDs.add(contestant);
+    	}
+    	System.out.println(contestantLoginIDs.get(0).getId());
+    	return contestantLoginIDs;
+    }
+    
+    public List<Contest> getContestsJudge(String judgeID) throws SQLException {
+    	String sql = "select contest.* "
+    			+ "from "
+    			+ "(select contest_id from judgeby where judge_id = ?) t1 "
+    			+ "left join contest "
+    			+ "on contest.contest_id = t1.contest_id;";
+    	connectFunc();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, judgeID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	List<Contest> contests = new ArrayList<Contest>();
+    	Contest contestObj;
+    	while (resultSet.next()) {
+    		String contestID = resultSet.getString("contest_id");
+    		String sponsorID = resultSet.getString("sponsor_id");
+    		String title = resultSet.getString("title");
+    		LocalDateTime beginTime = resultSet.getObject("begin_time", LocalDateTime.class);
+    		LocalDateTime endTime = resultSet.getObject("end_time", LocalDateTime.class);
+    		String status = resultSet.getString("status");
+    		String requirementList = resultSet.getString("requirement_list");
+    		long sponsorFee = resultSet.getLong("sponsor_fee");
+    		contestObj = new Contest(contestID, sponsorID, title, beginTime, endTime, status, requirementList, sponsorFee); 
+    		System.out.println(contestObj.getTitle());
+    		contests.add(contestObj);
+    	}
+    	
+    	return contests; 
+    	
+    	
+    }
     protected List<Contest> getContestsParticipated(String contestantID) throws SQLException {
     	String sql = "select contest.*\r\n"
     			+ "from (\r\n"

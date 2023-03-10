@@ -93,6 +93,15 @@ public class ControlServlet extends HttpServlet {
         	case "/contestDetailsSponsor":
         		contestDetailsSponsor(request, response);
         		break;
+        	case "/contestDetailsJudge":
+        		contestDetailsJudge(request, response);
+        		break;
+        	case "submitScore":
+        		submitScore(request, response);
+        		break;
+        	case "score":
+        		score(request, response);
+        		
         	
 	    	}
 	    }
@@ -121,6 +130,14 @@ public class ControlServlet extends HttpServlet {
 	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    }
 	    
+	    protected void score(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	
+	    }
+	    
+	    protected void submitScore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	
+	    }
+	    
 	    protected void submitContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
 	    	String submission = request.getParameter("context");
 	    	String contestantID = request.getParameter("userID");
@@ -136,6 +153,8 @@ public class ControlServlet extends HttpServlet {
 	    	}
 	    }
 	    
+	    
+	    
 	    protected void submitpage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String contestID = request.getParameter("contestID");
 	    	String contestantID = request.getParameter("userID");
@@ -144,6 +163,22 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("userID", contestantID);
 	    	request.setAttribute("contestID", contestID);
 	    	RequestDispatcher rd = request.getRequestDispatcher("submit.jsp");
+	    	rd.forward(request, response);
+	    }
+	    
+	    protected void contestDetailsJudge(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestID = request.getParameter("id");
+	    	String judgeID = request.getParameter("judgeID");
+	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	List<Contestant> contestantList = userDAO.getContestantsJudge(contestID, judgeID);
+	    	request.setAttribute("contestName", contest.getTitle());
+	    	request.setAttribute("beginTime", contest.getBeginTime());
+	    	request.setAttribute("endTime", contest.getEndTime());
+	    	request.setAttribute("requirements", contest.getRequirementList());
+	    	request.setAttribute("userID", judgeID);
+	    	request.setAttribute("contestID", contest.getContestID());
+	    	request.setAttribute("contestantList", contestantList);
+	    	RequestDispatcher rd = request.getRequestDispatcher("contestJudge.jsp");
 	    	rd.forward(request, response);
 	    }
 	    
@@ -158,6 +193,7 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("requirements", contest.getRequirementList());
 	    	request.setAttribute("userID", sponsorID);
 	    	request.setAttribute("contestID", contest.getContestID());
+	    	request.setAttribute("status", contest.getStatus());
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestSponsor.jsp");
 	    	rd.forward(request, response);
 	    }
@@ -173,6 +209,7 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("requirements", contest.getRequirementList());
 	    	request.setAttribute("userID", contestantID);
 	    	request.setAttribute("contestID", contest.getContestID());
+	    	request.setAttribute("status", contest.getStatus());
 	    	RequestDispatcher rd = request.getRequestDispatcher("contest.jsp");
 	    	rd.forward(request, response);
 	    	
@@ -224,6 +261,8 @@ public class ControlServlet extends HttpServlet {
 	    		    	
 	    }
 	    
+	    
+	    
 	    protected void checkUserID(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	PrintWriter out = response.getWriter();
 	    	String outMessage = "";
@@ -271,8 +310,14 @@ public class ControlServlet extends HttpServlet {
 	    	 }
 	    	 
 	    	 else if (role.equals("judge") && userDAO.isValid(userID, password, role)) {
-	    		 request.setAttribute("resStr","Logging in successfully as the judge user");
-		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
+//	    		 request.setAttribute("resStr","Logging in successfully as the judge user");
+	    		 String judgeID = userDAO.getJudgeIDByLoginID(userID);
+	    		 Judge judge = userDAO.getjudgeByLoginID(userID);
+	    		 List<Contest> contests = userDAO.getContestsJudge(judgeID);
+	    		 request.setAttribute("walletAddress", judge.getId());
+	    		 request.setAttribute("balande", judge.getRewardBalance());
+	    		 request.setAttribute("contests", contests);
+		   	 	 request.getRequestDispatcher("judgeIndex.jsp").forward(request, response);
 	    		 
 	    	 }
 	    	 else {

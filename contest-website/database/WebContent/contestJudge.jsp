@@ -18,6 +18,10 @@
             margin: 0 auto;
             padding: 20px;
         }
+        a {
+			color: #337ab7;
+			text-decoration: none;
+		}
         .title {
             font-size: 32px;
             font-weight: bold;
@@ -44,6 +48,18 @@
         .button:hover {
             background-color: #3e8e41;
         }
+        table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		th, td {
+			padding: 8px;
+			text-align: left;
+			border-bottom: 1px solid #CCC;
+		}
+		th {
+			background-color: #EEE;
+		}
     </style>
 </head>
 <body>
@@ -55,10 +71,25 @@
        <form action="submitpage" method="post">
             <input type="hidden" name="userID" value="${userID}" />
             <input type="hidden" name="contestID" value="${contestID}" />
-            <c:if test="${status == 'opened'}">
-            	<button type="submit" class="button">Submit Contest</button>
-            </c:if>
+            
         </form>
+        <table>
+			<thead>
+				<tr>
+					<th>Contestant UserID</th>
+					
+					<th>Go to Score it</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="contestant" items="${contestantList}">
+					<tr>
+						<td>${contestant.getLoginID()}</a></td>
+						<td><a href="score?id=${contestID}&judgeId=${userID}&contestantID={contestant.getId()}">Score</a></td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
     </div>
 </body>
 </html>

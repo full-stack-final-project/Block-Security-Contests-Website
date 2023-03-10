@@ -92,6 +92,7 @@
 	<div class="container">
 		<h1>Welcome Sponsor </h1>
 		<h5>${userID} </h5>
+		
 		<div class="form-field">
 			
 			<input type="hidden" id="userID" name="userID" value="${userID}" >
@@ -102,7 +103,8 @@
 		<h2>Your Contests:</h2>
 		<ul class="contest-list">
 			<c:forEach items="${contestList}" var="contest">
-				<li><a href="contestDetailsSponsor?id=${contest.getContestID()}&userID=${userID}">Click to see more details about ${contest.getTitle()}</a></li>
+				<li><a href="contestDetailsSponsor?id=${contest.getContestID()}&userID=${userID}">Click to see more details about this contest ${contest.getTitle()} AND the status: ${contest.getStatus()}</a></li>
+				
 			</c:forEach>
 		</ul>
 	</div>

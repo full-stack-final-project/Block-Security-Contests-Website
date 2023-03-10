@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,7 +64,6 @@
 <body>
 	<div class="container">
 		<h1>Judge Index</h1>
-		<p>UserID: ${userID}</p>
 		<p>Wallet Address: ${ walletAddress }</p>
 		<p>Balance: ${ balance }</p>
 		<table>
@@ -72,16 +72,20 @@
 					<th>Contest Name</th>
 					<th>Begin time</th>
 					<th>End time</th>
+					<th>Status</th>
 					<th>Score</th>
 				</tr>
 			</thead>
 			<tbody>
 				<c:forEach var="contest" items="${contests}">
 					<tr>
-						<td><a href="contest.jsp?id=${ contest.getId() }">${contest.getName() }</a></td>
-						<td>${ contest.begin_time}</td>
-						<td>${ contest.end_time}</td>
-						<td><a href="score?judgeId=${userID}&amp&contestId=${contest.getId()}">Score</a></td>
+						<td><a href="contestDetailsJudge?id=${contest.getContestID()}&judgeID=${userID}">${contest.getTitle() }</a></td>
+						<td>${ contest.getBeginTime()}</td>
+						<td>${ contest.getEndTime()}</td>
+						<td>${contest.getStatus() }</td>
+						<c:if test="${contest.status == 'closed'}">
+						<td><a href="contestDetailsJudge?id=${contest.getContestID()}&judgeID=${walletAddress}"}">Score</a></td>
+						</c:if>
 					</tr>
 				</c:forEach>
 			</tbody>
