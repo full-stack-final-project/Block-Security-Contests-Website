@@ -79,6 +79,7 @@
 			<tbody>
 				<c:forEach var="contest" items="${contests}">
 					<tr>
+
 						<td><a href="contestDetailsJudge?id=${contest.getContestID()}&judgeID=${userID}">${contest.getTitle() }</a></td>
 						<td>${ contest.getBeginTime()}</td>
 						<td>${ contest.getEndTime()}</td>
@@ -86,6 +87,7 @@
 						<c:if test="${contest.status == 'closed'}">
 						<td><a href="contestDetailsJudge?id=${contest.getContestID()}&judgeID=${walletAddress}"}">Score</a></td>
 						</c:if>
+
 					</tr>
 				</c:forEach>
 			</tbody>

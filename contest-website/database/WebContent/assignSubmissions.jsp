@@ -90,26 +90,12 @@
 </head>
 <body>
 	<div class="container">
-		<h1>Welcome Sponsor </h1>
-		<h5>${userID} </h5>
-		
+		<h1>Assign Submissions. </h1>
+		<p>All submissions for contest ${contest.getContestID()} are evenly assigned to the judges.</p>
 		<div class="form-field">
-			
-			<input type="hidden" id="userID" name="userID" value="${userID}" >
-		</div>
-		<div class="form-field">
-			<a href="create?sponsor_id=${userID}" class="btn">Create Contest</a>
+			<a href="contestDetailsSponsor?id=${contest.getContestID()}" class="btn">Back to the contest page.</a>
 			<a href="index.jsp" class="btn">Log out</a>
 		</div>
-		<h2>Your Contests:</h2>
-		<ul class="contest-list">
-			<c:forEach items="${contestList}" var="contest">
-
-				<li><a href="contestDetailsSponsor?id=${contest.getContestID()}&userID=${userID}">Click to see more details about this contest ${contest.getTitle()} AND the status: ${contest.getStatus()}</a></li>
-				
-
-			</c:forEach>
-		</ul>
 	</div>
 </body>
 </html>
