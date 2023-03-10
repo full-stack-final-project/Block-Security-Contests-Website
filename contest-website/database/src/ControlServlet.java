@@ -93,28 +93,15 @@ public class ControlServlet extends HttpServlet {
         	case "/contestDetailsSponsor":
         		contestDetailsSponsor(request, response);
         		break;
-        	
+        	case "/distributeSubmission":
+        		distributeSubmission(request, response);
+        		break;
 	    	}
 	    }
 	    catch(Exception ex) {
         	System.out.println(ex.getMessage());
 	    	}
 	    }
-        	
-//	    private void listUser(HttpServletRequest request, HttpServletResponse response)
-//	            throws SQLException, IOException, ServletException {
-//	        System.out.println("listUser started: 00000000000000000000000000000000000");
-//
-//	     
-//	        List<user> listUser = userDAO.listAllUsers();
-//	        request.setAttribute("listUser", listUser);       
-//	        RequestDispatcher dispatcher = request.getRequestDispatcher("UserList.jsp");       
-//	        dispatcher.forward(request, response);
-//	     
-//	        System.out.println("listPeople finished: 111111111111111111111111111111111111");
-//	    }
-	    
-	    
 	    	        
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
 //	    	request.setAttribute("resStr","You just initialized the database. You can review the whole database through Workbench now");
@@ -159,6 +146,16 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("userID", sponsorID);
 	    	request.setAttribute("contestID", contest.getContestID());
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestSponsor.jsp");
+	    	rd.forward(request, response);
+	    }
+	    
+	    protected void distributeSubmission(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	System.out.println("Arrived here.");
+	    	String contestID = request.getParameter("id");
+	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	userDAO.assignSubmissionsToJudges(contest);
+	    	request.setAttribute(contestID, contest);
+	    	RequestDispatcher rd = request.getRequestDispatcher("assignSubmissions.jsp");
 	    	rd.forward(request, response);
 	    }
 	    

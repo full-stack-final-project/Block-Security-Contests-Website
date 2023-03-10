@@ -180,7 +180,6 @@ public class userDAO
     
     public Contest getContestbyID(String contestID) throws SQLException {
     	String sql = "Select * from contest where contest_id = '" + contestID + "';";
-    	System.out.println(sql);
     	connectFunc();
     	statement = (Statement) connect.createStatement();
     	ResultSet resultSet = statement.executeQuery(sql);
@@ -190,7 +189,6 @@ public class userDAO
     	String sponsor_id = resultSet.getString("sponsor_id");
     	String title = resultSet.getString("title");
     	LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
-    	System.out.println(begin_time);
     	LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
     	String status = resultSet.getString("status");
     	String requirement_list = resultSet.getString("requirement_list");
@@ -450,6 +448,7 @@ public class userDAO
     	resultSet.next();
     	int judgesCount = resultSet.getInt("judgesCount");
     	resultSet = statement.executeQuery(getContestantsCount);
+    	resultSet.next();
     	int contestantsCount = resultSet.getInt("contestantsCount");
     	
     	// get judges ID and contestants ID
@@ -483,7 +482,7 @@ public class userDAO
     	
     }
     
-//    Distributed rewards.
+    // Distributed rewards.
     public void distributedRewardsToJudges(Contest contest) throws SQLException {
     	connectFunc();
     	String getJudgesCount = "select count(*) as judgeCount from judgeby where contest_id = '" + contest.getContestID() + "';"; 
