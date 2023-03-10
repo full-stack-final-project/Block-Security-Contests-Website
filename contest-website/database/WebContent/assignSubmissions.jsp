@@ -93,7 +93,7 @@
 		<h1>Assign Submissions. </h1>
 		<p>All submissions for contest ${contest.getContestID()} are evenly assigned to the judges.</p>
 		<div class="form-field">
-			<a href="contestDetailsSponsor?id=${contest.getContestID()}}" class="btn">Back to the contest page.</a>
+			<a href="contestDetailsSponsor?id=${contest.getContestID()}" class="btn">Back to the contest page.</a>
 			<a href="index.jsp" class="btn">Log out</a>
 		</div>
 	</div>

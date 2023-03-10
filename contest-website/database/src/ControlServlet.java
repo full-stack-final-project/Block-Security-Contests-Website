@@ -154,7 +154,7 @@ public class ControlServlet extends HttpServlet {
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	userDAO.assignSubmissionsToJudges(contest);
-	    	request.setAttribute(contestID, contest);
+	    	request.setAttribute("contest", contest);
 	    	RequestDispatcher rd = request.getRequestDispatcher("assignSubmissions.jsp");
 	    	rd.forward(request, response);
 	    }
