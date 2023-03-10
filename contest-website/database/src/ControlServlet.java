@@ -120,11 +120,29 @@ public class ControlServlet extends HttpServlet {
 	    
 
 	    protected void score(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	String contestID = request.getParameter("id");
+	    	String judgeID = request.getParameter("judgeID");
+	    	String contestantID = request.getParameter("contestantID");
+	    	String submission = userDAO.getSubmission(contestID, contestantID);
+	    	
+	    	request.setAttribute("submission", submission);
+	    	request.setAttribute("userID", judgeID);
+	    	request.setAttribute("contestantID", contestantID);
+	    	request.setAttribute("contestID", contestID);
+	    	
+	    	request.getRequestDispatcher("score.jsp").forward(request, response);
 	    	
 	    }
 	    
 	    protected void submitScore(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
-	    	
+	    	String contestID = request.getParameter("contestID");
+	    	String judgeID = request.getParameter("userID");
+	    	String contestantID = request.getParameter("contestantID");
+	    	String scoreStr = request.getParameter("score");
+	    	int score = Integer.parseInt(scoreStr);
+	    	if (userDAO.updateGrade(contestID, contestantID, score)) {
+	    		System.out.println("Updated the grade.");
+	    	}
 	    }
 
 	    protected void submitContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{

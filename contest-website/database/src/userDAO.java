@@ -419,6 +419,35 @@ public class userDAO
     	return contestantLoginIDs;
     }
     
+    public boolean updateGrade(String contestID, String contestantID, int grade) throws SQLException  {
+    	String sql = "Update grade \n"
+    			+ "set score = ? \n"
+    			+ "where contestID = ? and contestantID = ?;";
+    	connectFunc();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setInt(1, grade);
+    	preparedStatement.setString(2, contestID);
+    	preparedStatement.setString(3, contestantID);
+    	
+    	boolean resultSet = preparedStatement.executeUpdate() > 0;
+    	return resultSet;
+    }
+    
+    public String getSubmission(String contestID, String contestantID) throws SQLException {
+    	String submission;
+    	
+    	String sql = "select submission from participate where contest_id = ? and contestant_id = ?;";
+    	
+    	connectFunc();
+    	preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
+    	preparedStatement.setString(1, contestID);
+    	preparedStatement.setString(2, contestantID);
+    	ResultSet resultSet = preparedStatement.executeQuery();
+    	resultSet.next();
+    	submission = resultSet.getString("submission");
+    	return submission;
+    }
+    
     public List<Contest> getContestsJudge(String judgeID) throws SQLException {
     	String sql = "select contest.* "
     			+ "from "
