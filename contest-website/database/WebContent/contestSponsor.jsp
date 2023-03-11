@@ -68,6 +68,16 @@
         	<a href="distributeBonus?id=${contestID}&sponsorID=${userID}">Distribute bonus</a>
         </c:if>
         
+        
+        <h2>Assigned Judges:</h2>
+		<ul class="contest-list">
+			<c:forEach items="${judgeList}" var="judge">
+
+				<li><a href="reviewJudge?id=${judge.getId()}&userID=${userID}">Click to review the judge ${judge.getLoginID()}</a></li>
+				
+
+			</c:forEach>
+		</ul>
 
     </div>
 </body>

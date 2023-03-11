@@ -92,6 +92,16 @@
 				</c:forEach>
 			</tbody>
 		</table>
+		
+		 <h2>Reviews for you:</h2>
+		<ul class="contest-list">
+			<c:forEach items="${ReviewList}" var="review">
+
+				<li>${review}</li>
+				
+
+			</c:forEach>
+		</ul>
 	</div>
 </body>
 </html>
