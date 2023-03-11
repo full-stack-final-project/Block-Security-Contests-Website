@@ -64,8 +64,8 @@
         </form>
 
         <c:if test="${status == 'closed'}">
-        	<a href="distributeSubmission?id=${contestID}">Distribute submissions to judges</a><br>
-        	<a href="distributeBonus?id=${contestID}">Distribute bonus</a>
+        	<a href="distributeSubmission?id=${contestID}&sponsorID=${userID}">Distribute submissions to judges</a><br>
+        	<a href="distributeBonus?id=${contestID}&sponsorID=${userID}">Distribute bonus</a>
         </c:if>
         
 
