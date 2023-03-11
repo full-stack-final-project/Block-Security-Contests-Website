@@ -336,9 +336,7 @@ public class userDAO
     	return contestant;
     }
     
-
-
-    protected Judge getjudgeByLoginID(String loginID) throws SQLException {
+    public Judge getjudgeByLoginID(String loginID) throws SQLException {
     	String sql = "select * from judge where login_id = ?";
     	String judgeID = "";
     	connectFunc();
@@ -356,6 +354,23 @@ public class userDAO
     		judge = new Judge(judgeID, loginID, password, balance, avg_score, review_num);
     	}
     	
+    	return judge;
+    }
+    
+    public Judge getjudgeByID(String judgeID) throws SQLException {
+    	String sql = "select * from judge where judge_id = '" + judgeID + "';";
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	Judge judge = new Judge();
+    	while (resultSet.next()) {
+    		String loginID = resultSet.getString("login_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		float avg_score = resultSet.getFloat("avg_score");
+    		int review_num = resultSet.getInt("review_number");
+    		String password = resultSet.getString("password");
+    		judge = new Judge(judgeID, loginID, password, balance, avg_score, review_num);
+    	}
     	return judge;
     }
     
@@ -583,7 +598,16 @@ public class userDAO
     }
     
     // Distributed rewards.
-    public void distributedRewardsToJudges(Contest contest) throws SQLException {
+    public void distributeContestRewards(Contest contest) throws SQLException{
+    	distributedRewardsToJudges(contest);
+    	distributedRewardsToContestants(contest);
+    	String updateStatus = "Update contest set status = 'past' where contest_id = '" + contest.getContestID() + "';";
+    	statement = (Statement) connect.createStatement();
+    	statement.executeQuery(updateStatus);
+    }
+    
+    
+    protected void distributedRewardsToJudges(Contest contest) throws SQLException {
     	connectFunc();
     	String getJudgesCount = "select count(*) as judgeCount from judgeby where contest_id = '" + contest.getContestID() + "';"; 
     	String getJudgesInfo = "select judge.* from\r\n"
@@ -627,7 +651,7 @@ public class userDAO
     	statement.close();
     }
     
-    public void distributedRewardsToContestants(Contest contest) throws SQLException {
+    protected void distributedRewardsToContestants(Contest contest) throws SQLException {
     	connectFunc();
     	String getCountAndScores = "select count(*) as contestantsCount, sum(score) as totalScore from grade where contest_id = '" + contest.getContestID() + "';"; 
     	String getContestantsInfo = "select contestant.*, filtered_contestants.score as score from "

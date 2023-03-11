@@ -257,16 +257,12 @@ public class ControlServlet extends HttpServlet {
 	    
 	    
 	    protected void distributeRewards(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-	    	System.out.println("START TO DISTRIBUTE");
 	    	String sponsorID = request.getParameter("sponsorID");
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	userDAO.distributedRewardsToJudges(contest);
 	    	userDAO.distributedRewardsToContestants(contest);
 	    	sponsorReturn(request, response, "Sucessfully distibuted Rewards to judges and contestants", sponsorID);
-//	    	request.setAttribute("contest", contest);
-//	    	RequestDispatcher rd = request.getRequestDispatcher("assignSubmissions.jsp");
-//	    	rd.forward(request, response);
 	    }
 
 	    protected void contestDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
