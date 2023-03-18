@@ -282,11 +282,6 @@ public class ControlServlet extends HttpServlet {
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	response.sendRedirect("/sponsorReturn?tips=s1&sponsorID="+sponsorID);
-//	    	sponsorReturn(request, response, "Sucessfully distibuted submissions to judges", sponsorID);
-//	    	userDAO.assignSubmissionsToJudges(contest);
-//	    	request.setAttribute("contest", contest);
-//	    	RequestDispatcher rd = request.getRequestDispatcher("assignSubmissions.jsp");
-//	    	rd.forward(request, response);
 	    }
 	    
 	    
