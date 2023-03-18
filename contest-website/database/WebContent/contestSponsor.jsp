@@ -65,10 +65,14 @@
 
         <c:if test="${status == 'closed'}">
         	<a href="distributeSubmission?id=${contestID}&sponsorID=${userID}">Distribute submissions to judges</a><br>
-        	<a href="distributeBonus?id=${contestID}&sponsorID=${userID}">Distribute bonus</a>
+        	
         </c:if>
         
+        <c:if test="${completed == 'True'}">
+        <a href="distributeBonus?id=${contestID}&sponsorID=${userID}">Distribute bonus</a>
+        </c:if>
         
+        <c:if test="${status == 'past'}">
         <h2>Assigned Judges:</h2>
 		<ul class="contest-list">
 			<c:forEach items="${judgeList}" var="judge">
@@ -78,7 +82,7 @@
 
 			</c:forEach>
 		</ul>
-
+		</c:if>
     </div>
 </body>
 </html>
