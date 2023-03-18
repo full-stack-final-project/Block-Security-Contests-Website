@@ -220,6 +220,7 @@ public class ControlServlet extends HttpServlet {
 	    	String sponsorID = request.getParameter("userID");
 	    	System.out.println(contestID);
 	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	List<Judge> judges = userDAO.GetJudgesContest(contestID);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
@@ -228,6 +229,7 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("contestID", contest.getContestID());
 	    	
 	    	request.setAttribute("status", contest.getStatus());
+	    	request.setAttribute("judgeList", judges);
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestSponsor.jsp");
 	    	rd.forward(request, response);
 	    }
