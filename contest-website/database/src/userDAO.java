@@ -116,6 +116,69 @@ public class userDAO
 //        return listUser;
 //    }
     
+    public List<Contestant> findYs(String contestantLoginID) throws SQLException {
+    	
+    	Contestant contestant = getContestantByLoginID(contestantLoginID);
+    	
+    	List<Contestant> Ys = new ArrayList<Contestant>();
+    	
+    	String sql = "Select c2.*\r\n"
+    			+ "from participate pp1\r\n"
+    			+ "join participate pp2 on pp1.contest_id = pp2.contest_id and pp1.contestant_id <> pp2.contestant_id\r\n"
+    			+ "join contestant c1 on c1.contestant_id = pp1.contestant_id and c1.contestant_id = " + contestant.id + "\r\n"
+    			+ "join contestant c2 on pp2.contestant_id = c2.contestant_id\r\n"
+    			+ "group by pp2.contestant_id\r\n"
+    			+ "having count(*) = (select count(*) from participate p1 where p1.contestant_id = " + contestant.id + ");";
+    	
+    	connectFunc();
+    	
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String contestantID = resultSet.getString("contestant_id");
+    		String loginID = resultSet.getString("login_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		contestant = new Contestant(contestantID, loginID, balance, password);
+    		Ys.add(contestant);
+    	}
+    	
+    	return Ys;
+    }
+    
+    public List<Contest> findToughContests() throws SQLException {
+    	List<Contest> toughContests = new ArrayList<Contest>();
+    	
+    	String sql = "select * from contest\r\n"
+    			+ "where contest_id in (\r\n"
+    			+ "select contest.contest_id from participate \r\n"
+    			+ "right join contest \r\n"
+    			+ "on participate.contest_id = contest.contest_id\r\n"
+    			+ "group by contest.contest_id\r\n"
+    			+ "having count(*) < 10)\r\n"
+    			+ "and contest.status = 'past';";
+
+    	connectFunc();
+    	
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String contestID = resultSet.getString("contest_id");
+    		String sponsorID = resultSet.getString("sponsor_id");
+    		String title = resultSet.getString("title");
+    		LocalDateTime beginTime = resultSet.getObject("begin_time", LocalDateTime.class);
+    		LocalDateTime endTime = resultSet.getObject("end_time", LocalDateTime.class);
+    		String status = resultSet.getString("status");
+    		String requirementList = resultSet.getString("requirement_list");
+    		long sponsorFee = resultSet.getLong("sponsor_fee");
+    		Contest toughContest = new Contest(contestID, sponsorID, title, beginTime, endTime, status, requirementList, sponsorFee);
+    		toughContests.add(toughContest);
+    	}
+    	
+    	return toughContests;
+    }
+    
+    
     public List<String> listJudgesName() throws SQLException{
     	List<String> judgesName = new ArrayList<String>();
     	String sql = "Select login_id, avg_score from judge;";
@@ -318,7 +381,7 @@ public class userDAO
     	return sponsorID;
     }
     
-    protected Contestant getContestantByLoginID(String loginID) throws SQLException {
+    public Contestant getContestantByLoginID(String loginID) throws SQLException {
     	String sql = "select * from contestant where login_id = ?";
     	String contestantID = "";
     	connectFunc();

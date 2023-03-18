@@ -114,8 +114,17 @@ public class ControlServlet extends HttpServlet {
         	case "/judgeIndex":
         		judgeIndex(request, response);
         		break;
-        	case "contestantIndex":
+        	case "/contestantIndex":
         		contestantIndex(request, response);
+        		break;
+        	case "/sponsorReturn":
+        		sponsorReturn(request, response);
+        		break;
+        	case "/contestantReturn":
+        		contestantReturn(request, response);
+        		break;
+        	case "/judgeReturn":
+        		judgeReturn(request, response);
         		break;
 
 	    	}
@@ -157,7 +166,7 @@ public class ControlServlet extends HttpServlet {
 //	    	if (userDAO.updateGrade(contestID, contestantID, score)) {
 //	    		System.out.println("Updated the grade.");
 //	    	}
-	    	judgeReturn(request, response, "Successfully sumbitted the score!", judgeID);
+	    	response.sendRedirect("/judgeReturn?tips=s1&judgeID="+judgeID);
 	    }
 
 	    protected void submitContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
@@ -172,7 +181,7 @@ public class ControlServlet extends HttpServlet {
 //	    		 request.setAttribute("contests", contests);
 //	    		 
 //	    		 request.getRequestDispatcher("contestantIndex.jsp").forward(request, response);
-	    		contestantReturn(request, response, "Successfully submitted!", contestantID);
+	    		response.sendRedirect("/contestantReturn?tips=s1&contestantID="+contestantID);
 	    	}
 	    }
 	    
@@ -223,21 +232,45 @@ public class ControlServlet extends HttpServlet {
 	    	rd.forward(request, response);
 	    }
 	    
-	    protected void sponsorReturn(HttpServletRequest request, HttpServletResponse response, String returnContext, String sponsorID ) throws ServletException, IOException, SQLException{
+	    protected void sponsorReturn(HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException, SQLException{
+	    	String returnContextCode = request.getParameter("tips");
+	    	String returnContext = "";
+	    	String sponsorID = request.getParameter("sponsorID");
+	    	if (returnContextCode.equals("s1")){
+	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants";
+	    		
+	    	}
+	    	else if (returnContextCode.equals("s2")) {
+	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants";
+	    	}
 	    	request.setAttribute("tips", returnContext);
 	    	request.setAttribute("sponsorID", sponsorID);
 	    	RequestDispatcher rd = request.getRequestDispatcher("sponsorReturn.jsp");
 	    	rd.forward(request, response);
 	    }
 	    
-	    protected void contestantReturn(HttpServletRequest request, HttpServletResponse response, String returnContext, String contestantID ) throws ServletException, IOException, SQLException{
+	    protected void contestantReturn(HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException, SQLException{
+	    	
+	    	String returnContextCode = request.getParameter("tips");
+	    	String returnContext = "";
+	    	String contestantID = request.getParameter("contestantID");
+	    	if (returnContextCode.equals("s1")) {
+	    		returnContext = "Successfully submitted!";
+	    	}
+	    	
 	    	request.setAttribute("tips", returnContext);
 	    	request.setAttribute("sponsorID", contestantID);
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestantReturn.jsp");
 	    	rd.forward(request, response);
 	    }
 	    
-	    protected void judgeReturn(HttpServletRequest request, HttpServletResponse response, String returnContext, String judgeID ) throws ServletException, IOException, SQLException{
+	    protected void judgeReturn(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	String returnContextCode = request.getParameter("tips");
+	    	String returnContext = "";
+	    	String judgeID = request.getParameter("judgeID");
+	    	if (returnContextCode.equals("s1")) {
+	    		returnContext = "Successfully sumbitted the score!";
+	    	}
 	    	request.setAttribute("tips", returnContext);
 	    	request.setAttribute("sponsorID", judgeID);
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestantReturn.jsp");
@@ -248,7 +281,8 @@ public class ControlServlet extends HttpServlet {
 	    	String sponsorID = request.getParameter("sponsorID");
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
-	    	sponsorReturn(request, response, "Sucessfully distibuted submissions to judges", sponsorID);
+	    	response.sendRedirect("/sponsorReturn?tips=s1&sponsorID="+sponsorID);
+//	    	sponsorReturn(request, response, "Sucessfully distibuted submissions to judges", sponsorID);
 //	    	userDAO.assignSubmissionsToJudges(contest);
 //	    	request.setAttribute("contest", contest);
 //	    	RequestDispatcher rd = request.getRequestDispatcher("assignSubmissions.jsp");
@@ -262,7 +296,8 @@ public class ControlServlet extends HttpServlet {
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	userDAO.distributedRewardsToJudges(contest);
 	    	userDAO.distributedRewardsToContestants(contest);
-	    	sponsorReturn(request, response, "Sucessfully distibuted Rewards to judges and contestants", sponsorID);
+	    	response.sendRedirect("/sponsorReturn?tips=s2&sponsorID="+sponsorID);
+//	    	sponsorReturn(request, response, "Sucessfully distibuted Rewards to judges and contestants", sponsorID);
 	    }
 
 	    protected void contestDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -422,27 +457,6 @@ public class ControlServlet extends HttpServlet {
 		   	 	 request.getRequestDispatcher("tempRes.jsp").forward(request, response);
 	    	 }
 	    	
-//	    	 String email = request.getParameter("email");
-//	    	 String password = request.getParameter("password");
-//	    	 
-//	    	 if (email.equals("root") && password.equals("pass1234")) {
-//				 System.out.println("Login Successful! Redirecting to root");
-//				 session = request.getSession();
-//				 session.setAttribute("username", email);
-//				 rootPage(request, response, "");
-//	    	 }
-//	    	 else if(userDAO.isValid(email, password)) 
-//	    	 {
-//			 	 
-//			 	 currentUser = email;
-//				 System.out.println("Login Successful! Redirecting");
-//				 request.getRequestDispatcher("activitypage.jsp").forward(request, response);
-//			 			 			 			 
-//	    	 }
-//	    	 else {
-//	    		 request.setAttribute("loginStr","Login Failed: Please check your credentials.");
-//	    		 request.getRequestDispatcher("login.jsp").forward(request, response);
-//	    	 }
 	    }
 	           
 	    private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
