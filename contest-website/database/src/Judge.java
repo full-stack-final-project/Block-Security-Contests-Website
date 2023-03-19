@@ -4,6 +4,7 @@ public class Judge extends User{
 	protected float reward_balance;
 	protected float avg_score;
 	protected int review_number;
+	protected String login_id;
 
 	public Judge() {
 	}
@@ -18,6 +19,9 @@ public class Judge extends User{
     }
     
    //getter and setter methods
+    public String getLoginID() {
+    	return this.login_id;
+    }
     public float getRewardBalance() {
         return this.reward_balance;
     }
