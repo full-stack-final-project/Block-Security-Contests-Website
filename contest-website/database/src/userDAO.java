@@ -116,7 +116,7 @@ public class userDAO
 //        return listUser;
 //    }
     
-    public List<Judge> GetJudgesContest(String contestID) throws SQLException {
+    public List<Judge> getJudgesContest(String contestID) throws SQLException {
     	List<Judge> judgesForContest = new ArrayList<Judge>();
     	
     	String sql = "Select j.* from judge j\r\n"
@@ -689,6 +689,7 @@ public class userDAO
     
     // Distributed rewards.
     public void distributeContestRewards(Contest contest) throws SQLException{
+    	connectFunc();
     	distributedRewardsToJudges(contest);
     	distributedRewardsToContestants(contest);
     	String updateStatus = "Update contest set status = 'past' where contest_id = '" + contest.getContestID() + "';";

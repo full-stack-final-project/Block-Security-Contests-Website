@@ -220,7 +220,7 @@ public class ControlServlet extends HttpServlet {
 	    	String sponsorID = request.getParameter("userID");
 	    	System.out.println(contestID);
 	    	Contest contest = userDAO.getContestbyID(contestID);
-	    	List<Judge> judges = userDAO.GetJudgesContest(contestID);
+	    	List<Judge> judges = userDAO.getJudgesContest(contestID);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
