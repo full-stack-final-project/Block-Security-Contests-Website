@@ -116,7 +116,7 @@ public class userDAO
 //        return listUser;
 //    }
     
-    public List<Judge> GetJudgesContest(String contestID) throws SQLException {
+    public List<Judge> getJudgesContest(String contestID) throws SQLException {
     	List<Judge> judgesForContest = new ArrayList<Judge>();
     	
     	String sql = "Select j.* from judge j\r\n"
@@ -724,6 +724,7 @@ public class userDAO
     
     // Distributed rewards.
     public void distributeContestRewards(Contest contest) throws SQLException{
+    	connectFunc();
     	distributedRewardsToJudges(contest);
     	distributedRewardsToContestants(contest);
     	String updateStatus = "Update contest set status = 'past' where contest_id = '" + contest.getContestID() + "';";
@@ -821,9 +822,20 @@ public class userDAO
     	statement.close();
     }
     
-    
-    
-    
+    // check if all grading for a contest are done or not
+    public String checkContestComplete(String contestID) throws SQLException{
+    	connectFunc();
+    	String result;
+    	String checkComplete = "select * from grade where contest_id = '" + contestID + "' and complete = 0;";
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(checkComplete);
+    	if (resultSet.next()){
+    		result = "false";
+    	}else {
+    		result = "true";
+    	}
+    	return result;
+    }
     
     
     public void insert(User users, String role) throws SQLException {

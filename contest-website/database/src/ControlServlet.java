@@ -254,14 +254,15 @@ public class ControlServlet extends HttpServlet {
 	    	String sponsorID = request.getParameter("userID");
 	    	System.out.println(contestID);
 	    	Contest contest = userDAO.getContestbyID(contestID);
-	    	List<Judge> judges = userDAO.GetJudgesContest(contestID);
+	    	List<Judge> judges = userDAO.getJudgesContest(contestID);
+	    	String complete = userDAO.checkContestComplete(contestID);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
 	    	request.setAttribute("requirements", contest.getRequirementList());
 	    	request.setAttribute("userID", sponsorID);
 	    	request.setAttribute("contestID", contest.getContestID());
-	    	
+	    	request.setAttribute("completed", complete);
 	    	request.setAttribute("status", contest.getStatus());
 	    	request.setAttribute("judgeList", judges);
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestSponsor.jsp");
