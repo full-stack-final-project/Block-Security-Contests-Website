@@ -300,6 +300,41 @@ public class userDAO
     	return resultSet;
     }
     
+    public boolean insertReview(String judgeID, String sponsorID, String review, int review_score) throws SQLException {
+    	String sql = "Insert into review (judge_id, sponsor_id, comment, review_score) " 
+    			+ "VALUE ( '" + judgeID + "', '" + sponsorID + "', '" + review + "', ' " + review_score +" ') " 
+    			+ "ON DUPLICATE KEY UPDATE "
+    			+ "review = '"+ review + "', review_score = '" + review_score + "';";
+    	System.out.println(sql);
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	boolean resultSet = statement.executeUpdate(sql) > 0;
+    	return resultSet;
+    }
+    
+    public List<Object> getReview(String judgeID, String sponsorID) throws SQLException {
+    	
+    	List<Object> review = new ArrayList<Object>();
+    	
+    	String sql = "Select exists ("
+    			+ "select * from review where judge_id = ' " + judgeID +"' and "
+    					+ "sponsor_id = '" + sponsorID + "');";
+    	
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	
+    	if (resultSet.next()) {
+    		String comment = resultSet.getString("comment");
+    		int score = resultSet.getInt("review_score");
+    		review.add(comment);
+    		review.add(score);
+    	}
+    	
+    	return review;
+    	
+    }
+    
     public Sponsor getSponsorbyID(String sponsor_ID) throws SQLException {
     	connectFunc();
     	String sql_find_sponsor = "select * from sponsor where sponsor_id = ?";
@@ -378,7 +413,7 @@ public class userDAO
 	    return bigSponsors;
     }
     
-    protected String getJudgeIDByLoginID(String loginID) throws SQLException {
+    public String getJudgeIDByLoginID(String loginID) throws SQLException {
     	String sql = "select judge_id from judge where login_id = ?";
     	String judgeID = "";
     	connectFunc();
@@ -510,7 +545,7 @@ public class userDAO
     }
     
     public void updateGrade(String contestID, String contestantID, int grade) throws SQLException  {
-    	String sql = "Update grade set score = '" + grade + "'\r\n"
+    	String sql = "Update grade set score = '" + grade + "', complete = '1' \r\n"
     			+ "where contest_id = '" + contestID + "' and contestant_id = '" + contestantID + "';";
     	connectFunc();
     	

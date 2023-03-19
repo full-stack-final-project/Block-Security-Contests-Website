@@ -126,6 +126,12 @@ public class ControlServlet extends HttpServlet {
         	case "/judgeReturn":
         		judgeReturn(request, response);
         		break;
+        	case "/reviewJudge":
+        		reviewJudge(request, response);
+        		break;
+        	case "/submitReview":
+        		submitReview(request, response);
+        		break;
 
 	    	}
 	    }
@@ -139,6 +145,34 @@ public class ControlServlet extends HttpServlet {
 	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
 	    }
 	    
+	    protected void reviewJudge(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	String judgeID = request.getParameter("id");
+	    	String sponsorID = request.getParameter("userID");
+	    	Judge judge = userDAO.getjudgeByID(judgeID);
+	    	String judgeLoginID = judge.getLoginID();
+	    	List<Object> review = userDAO.getReview(judgeID, sponsorID);
+	    	if (!review.isEmpty()) {
+	    		request.setAttribute("review", review.get(0));
+	    		request.setAttribute("score", review.get(1));
+	    	}
+	    	request.setAttribute("judgeLoginID", judgeLoginID);
+	    	request.setAttribute("sponsorID", sponsorID);
+	    	request.setAttribute("judgeID", judgeID);
+	    	request.getRequestDispatcher("review.jsp").forward(request, response);
+	    	
+	    }
+	    
+	    protected void submitReview(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	String judgeID = request.getParameter("judgeID");
+	    	String sponsorID = request.getParameter("sponsorID");
+	    	String comment = request.getParameter("context");
+	    	String scoreStr = request.getParameter("score");
+	    	int score = Integer.parseInt(scoreStr);
+	    	if (userDAO.insertReview(judgeID, sponsorID, comment, score)) {
+	    		response.sendRedirect("/sponsorReturn?tips=s3&sponsorID="+sponsorID);
+	    	}
+	    	
+	    }
 
 	    protected void score(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
 	    	String contestID = request.getParameter("id");
@@ -239,11 +273,14 @@ public class ControlServlet extends HttpServlet {
 	    	String returnContext = "";
 	    	String sponsorID = request.getParameter("sponsorID");
 	    	if (returnContextCode.equals("s1")){
-	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants";
+	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants!";
 	    		
 	    	}
 	    	else if (returnContextCode.equals("s2")) {
-	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants";
+	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants!";
+	    	}
+	    	else if (returnContextCode.equals("s2")) {
+	    		returnContext = "Sucessfully Reviewed!";
 	    	}
 	    	request.setAttribute("tips", returnContext);
 	    	request.setAttribute("sponsorID", sponsorID);
@@ -283,6 +320,7 @@ public class ControlServlet extends HttpServlet {
 	    	String sponsorID = request.getParameter("sponsorID");
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	userDAO.assignSubmissionsToJudges(contest);
 	    	response.sendRedirect("/sponsorReturn?tips=s1&sponsorID="+sponsorID);
 	    }
 	    
