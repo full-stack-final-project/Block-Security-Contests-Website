@@ -116,6 +116,33 @@ public class userDAO
 //        return listUser;
 //    }
     
+    public List<Judge> GetJudgesContest(String contestID) throws SQLException {
+    	List<Judge> judgesForContest = new ArrayList<Judge>();
+    	
+    	String sql = "Select j.* from judge j\r\n"
+    			+ "	join     			\r\n"
+    			+ "(select * from judgeby jb where contest_id = \""+ contestID + "\"\r\n"
+    			+ "	) as jb_contest on j.judge_id = jb_contest.judge_id;";
+    	
+    	connectFunc();
+    	
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String judgeID = resultSet.getString("judge_id");
+    		String loginID = resultSet.getString("login_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		float avg_score = resultSet.getFloat("avg_score");
+    		int review_num = resultSet.getInt("review_number");
+    		String password = resultSet.getString("password");
+    		
+    		Judge judge = new Judge(judgeID, loginID, password, balance, avg_score, review_num);
+    		judgesForContest.add(judge);
+    	}
+    	
+    	return judgesForContest;
+    }
+    
     public List<Contestant> findYs(String contestantLoginID) throws SQLException {
     	
     	Contestant contestant = getContestantByLoginID(contestantLoginID);
@@ -125,10 +152,10 @@ public class userDAO
     	String sql = "Select c2.*\r\n"
     			+ "from participate pp1\r\n"
     			+ "join participate pp2 on pp1.contest_id = pp2.contest_id and pp1.contestant_id <> pp2.contestant_id\r\n"
-    			+ "join contestant c1 on c1.contestant_id = pp1.contestant_id and c1.contestant_id = " + contestant.id + "\r\n"
+    			+ "join contestant c1 on c1.contestant_id = pp1.contestant_id and c1.contestant_id = '" + contestant.id + "'\r\n"
     			+ "join contestant c2 on pp2.contestant_id = c2.contestant_id\r\n"
     			+ "group by pp2.contestant_id\r\n"
-    			+ "having count(*) = (select count(*) from participate p1 where p1.contestant_id = " + contestant.id + ");";
+    			+ "having count(*) = (select count(*) from participate p1 where p1.contestant_id = '" + contestant.id + "');";
     	
     	connectFunc();
     	
