@@ -822,9 +822,18 @@ public class userDAO
     	statement.close();
     }
     
-    
-    
-    
+    // check if all grading for a contest are done or not
+    public boolean checkContestComplete(Contest contest) throws SQLException{
+    	connectFunc();
+    	String checkComplete = "select * from grade where contest_id = '" + contest.getContestID() + "' and complete = 0;";
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(checkComplete);
+    	if (resultSet.next()){
+    		return false;
+    	}else {
+    		return true;
+    	}
+    }
     
     
     public void insert(User users, String role) throws SQLException {
