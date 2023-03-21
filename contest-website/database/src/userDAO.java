@@ -205,6 +205,56 @@ public class userDAO
     	return toughContests;
     }
     
+    public List<Judge> findBusyJudges() throws SQLException {
+    	List<Judge> busyJudges = new ArrayList<Judge>();
+    	String sql = "select judge.judge_id \r\n"
+    			+ "from judge \r\n"
+    			+ "join judgeby on judge.judge_id = judgeby.judge_id\r\n"
+    			+ "join contest on judgeby.contest_id = contest.contest_id and contest.status = \"past\"\r\n"
+    			+ "group by judge.judge_id\r\n"
+    			+ "having count(*) = (select count(*) from contest where status = \"past\");";
+    	connectFunc();
+    	
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	
+    	while (resultSet.next()) {
+    		String judgeID = resultSet.getString("judge_id");
+    		String loginID = resultSet.getString("login_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		float avg_score = resultSet.getFloat("avg_score");
+    		int review_num = resultSet.getInt("review_number");
+    		String password = resultSet.getString("password");
+    		
+    		Judge judge = new Judge(judgeID, loginID, password, balance, avg_score, review_num);
+    		busyJudges.add(judge);
+    	}
+    	return busyJudges;
+    }
+    
+    public List<Contestant> findSleepyContestants() throws SQLException {
+    	List<Contestant> sleepyContestants = new ArrayList<Contestant>();
+    	
+    	String sql = "select * from contestant where contestant_id not in(\r\n"
+    			+ "select distinct(contestant_id) from \r\n"
+    			+ "participate\r\n"
+    			+ ");";
+    	connectFunc();
+    	
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String contestantID = resultSet.getString("contestant_id");
+    		String loginID = resultSet.getString("login_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		Contestant contestant = new Contestant(contestantID, loginID, balance, password);
+    		sleepyContestants.add(contestant);
+    	}
+    	
+    	return sleepyContestants;
+    }
+    
     
     public List<String> listJudgesName() throws SQLException{
     	List<String> judgesName = new ArrayList<String>();

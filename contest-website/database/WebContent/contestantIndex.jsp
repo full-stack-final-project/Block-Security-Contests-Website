@@ -75,6 +75,26 @@
 		.search-button:hover {
 			background-color: #3e8e41;
 		}
+		
+		.btn {
+			display: block;
+			width: 50%;
+			height: 50px;
+			margin: 10px auto;
+			text-align: center;
+			line-height: 50px;
+			font-size: 24px;
+			font-weight: bold;
+			color: #FFFFFF;
+			background-color: #008000;
+			border-radius: 5px;
+			text-decoration: none;
+		}
+
+		.btn:hover {
+			background-color: #006400;
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
@@ -84,7 +104,7 @@
 		<p><strong>Wallet Address:</strong> ${walletAddress}</p>
 		<p><strong>Balance:</strong> ${balance}</p>
 		<p><strong>Contests you participated </strong></p>
-		<a href="openContest?id=${walletAddress}">All open contests</a>
+		<a href="openContest?id=${walletAddress}" class="btn">All open contests</a>
 		<table>
 			<thead>
 				<tr>
