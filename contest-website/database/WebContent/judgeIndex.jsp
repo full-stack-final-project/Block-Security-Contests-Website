@@ -94,14 +94,25 @@
 		</table>
 		
 		 <h2>Reviews for you:</h2>
-		<ul class="contest-list">
-			<c:forEach items="${ReviewList}" var="review">
+		<table>
+			<thead>
+				<tr>
+					<th>Sponsor Name</th>
+					<th>Score</th>
+					<th>Comment</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="review" items="${reviews}">
+					<tr>
 
-				<li>${review}</li>
-				
-
-			</c:forEach>
-		</ul>
+						<td>{review.getSponsor()}</td>
+						<td>${review.getScore()}</td>
+						<td>${review.getComment()}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
 	</div>
 </body>
 </html>
