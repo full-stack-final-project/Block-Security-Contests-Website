@@ -4,6 +4,7 @@ public class Sponsor extends User{
 	protected String email;
 	protected String address;
 	protected long balance;
+	protected int numContest;
 
 	public Sponsor() {
 	}
@@ -17,9 +18,18 @@ public class Sponsor extends User{
         this.address = address;
         this.password = password;
         this.balance = balance;
+        this.numContest = 0;
     }
     
    //getter and setter methods
+    
+    public void setNumContest(int numContest) {
+    	this.numContest = numContest;
+    }
+    
+    public int getNumContest() {
+    	return this.numContest;
+    }
     
     public String getID() {
         return this.id;

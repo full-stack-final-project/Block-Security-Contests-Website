@@ -66,6 +66,7 @@
 		<h1>Judge Index</h1>
 		<p>Wallet Address: ${ walletAddress }</p>
 		<p>Balance: ${ balance }</p>
+		<p>Avg Review Score: ${reviewScore}</p>
 		<table>
 			<thead>
 				<tr>
@@ -97,7 +98,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Sponsor Name</th>
+				
 					<th>Score</th>
 					<th>Comment</th>
 				</tr>
@@ -106,7 +107,7 @@
 				<c:forEach var="review" items="${reviews}">
 					<tr>
 
-						<td>{review.getSponsor()}</td>
+						
 						<td>${review.getScore()}</td>
 						<td>${review.getComment()}</td>
 					</tr>
