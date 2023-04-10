@@ -131,7 +131,7 @@ function validateForm() {
                 <label for="judgeSelect">Choose 5-10 Judges:</label><br><br>
                 <c:forEach items="${judgesList}" var="judge">
         			<input type="checkbox" name="judges" value="${judge}" id="${judge}" />
-        			<label for="${judge}">${judge}</label><br />
+        			<label for="${judge}">${judge}</label><br>
    				 </c:forEach>
             </div>
             
