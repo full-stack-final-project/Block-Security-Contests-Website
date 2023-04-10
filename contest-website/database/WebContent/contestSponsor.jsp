@@ -49,6 +49,58 @@
         .button:hover {
             background-color: #3e8e41;
         }
+        .contest-list {
+			margin: 0 auto;
+			width: 60%;
+			padding: 20px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+		}
+		
+		.contest-header {
+			font-weight: bold;
+			font-size: 18px;
+			margin-bottom: 10px;
+		}
+		
+		.contest-item {
+			padding: 10px;
+			border-bottom: 1px solid #ccc;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		
+		.contest-name {
+			font-size: 16px;
+		}
+		
+		.contest-dates {
+			font-size: 14px;
+			color: #666;
+		}
+		
+		.contest-link {
+			font-size: 14px;
+			color: #4CAF50;
+			text-decoration: none;
+		}
+		
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 30px;
+		}
+		
+		th, td {
+			padding: 10px;
+			text-align: left;
+			border-bottom: 1px solid #ddd;
+		}
+		
+		tr:hover {
+			background-color: #f5f5f5;
+		}
     </style>
 </head>
 <body>
@@ -72,17 +124,39 @@
         <a href="distributeBonus?id=${contestID}&sponsorID=${userID}">Distribute bonus</a>
         </c:if>
         
-        <c:if test="${status == 'past'}">
+        
         <h2>Assigned Judges:</h2>
-		<ul class="contest-list">
+		<ul class="judge-list">
 			<c:forEach items="${judgeList}" var="judge">
 
-				<li><a href="reviewJudge?id=${judge.getId()}&userID=${userID}">Click to review the judge ${judge.getLoginID()}</a></li>
-				
+				<c:if test="${status == 'past'}"><li><a href="reviewJudge?id=${judge.getId()}&userID=${userID}">Click to review the judge ${judge.getLoginID()}</a></li></c:if>
+				<c:if test="${status != 'past'}"><li><a href="judgeprofile?judgeID=${judge.getId()}&sponsorID=${userID}">Click to see the judge ${judge.getLoginID()}'s profile</a></li></c:if>
 
 			</c:forEach>
 		</ul>
-		</c:if>
+		
     </div>
+    <div class="contest-list">
+	
+		<div class="contest-header">Contestants of this contest</div>
+		
+		<table>
+			<thead>
+				<tr>
+					<th>User ID</th>
+					<th>Reward</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="contestant" items="${contestants}">
+					<tr>
+						<td>${contestant.getLoginID()}</td>
+						<td>${contestant.getRewardBalance()}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	</div>
 </body>
 </html>

@@ -165,6 +165,12 @@ public class ControlServlet extends HttpServlet {
         	case "/copycatspage":
         		copyCatsPage(request, response);
         		break;
+        	case "/stat":
+        		stats(request, response);
+        		break;
+        	case "/judgeprofile":
+        		judgeprofile(request, response);
+        		break;
         	
 	    	}
 	    }
@@ -176,6 +182,35 @@ public class ControlServlet extends HttpServlet {
 	    private void rootPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
 	    	request.setAttribute("tips","You just initialized the database.");
 	   	 	request.getRequestDispatcher("rootReturn.jsp").forward(request, response);
+	    }
+	    
+	    protected void judgeprofile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String sponsorID = request.getParameter("sponsorID");
+	    	String judgeID = request.getParameter("JudgeID");
+	    	Judge judge = userDAO.getjudgeByID(judgeID);
+   		 	List<Contest> contests = userDAO.getContestsJudge(judgeID);
+   		 	List<Review> reviews = userDAO.getReviewOneJudge(judgeID);
+   		 	request.setAttribute("sponsorID", sponsorID);
+   		 	request.setAttribute("userID", judge.getLoginID());
+   		 	request.setAttribute("balance", judge.getRewardBalance());
+   		 	request.setAttribute("reviewScore", judge.getAvgScore());
+   		 	request.setAttribute("contests", contests);
+   		 	request.setAttribute("reviews", reviews);
+	   	 	request.getRequestDispatcher("sponsorJudgeIndex.jsp").forward(request, response);
+	    	
+	    }
+	    
+	    protected void stats(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Object> stat = userDAO.getStatistics();
+	    	request.setAttribute("numSponsors", stat.get(0));
+	    	request.setAttribute("numJudges", stat.get(1));
+	    	request.setAttribute("numContestants", stat.get(2));
+	    	request.setAttribute("numContests", stat.get(3));
+	    	request.setAttribute("sumSponsorFee", stat.get(4));
+	    	request.setAttribute("sumJudgeReward", stat.get(5));
+	    	request.setAttribute("sumContestantReward", stat.get(6));
+	    	request.getRequestDispatcher("sqlStat.jsp").forward(request, response);
+	    	
 	    }
 	    
 	    protected void copyCatsPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -353,6 +388,8 @@ public class ControlServlet extends HttpServlet {
 	    	String judgeID = request.getParameter("judgeID");
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	List<Contestant> contestantList = userDAO.getContestantsJudge(contestID, judgeID);
+	    	List<Contestant> contestants = userDAO.getContestantsOneContest(contestID);
+	    	request.setAttribute("contestants", contestants);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
@@ -372,6 +409,8 @@ public class ControlServlet extends HttpServlet {
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	List<Judge> judges = userDAO.getJudgesContest(contestID);
 	    	String complete = userDAO.checkContestComplete(contestID);
+	    	List<Contestant> contestants = userDAO.getContestantsOneContest(contestID);
+	    	request.setAttribute("contestants", contestants);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
@@ -381,6 +420,7 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("completed", complete);
 	    	request.setAttribute("status", contest.getStatus());
 	    	request.setAttribute("judgeList", judges);
+	    	
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestSponsor.jsp");
 	    	rd.forward(request, response);
 	    }
@@ -457,6 +497,8 @@ public class ControlServlet extends HttpServlet {
 	    	String contestantID = request.getParameter("userID");
 	    	System.out.println(contestID);
 	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	List<Contestant> contestants = userDAO.getContestantsOneContest(contestID);
+	    	request.setAttribute("contestants", contestants);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());

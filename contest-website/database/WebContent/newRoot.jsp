@@ -50,6 +50,7 @@
 	<div class="container">
 		<h1>Root User Page</h1>
 		<a href="initialize" class="btn">Initialize</a>
+		<a href="leaderboard" class="btn">Leader Board</a>
 		<a href="bigsponsors" class="btn">Big sponsors</a>
 		<a href="topjudges" class="btn">Top judges</a>
 		<a href="bestcontestants" class="btn">Best contestants</a>
@@ -57,8 +58,8 @@
 		<a href="sleepycontestants" class="btn">Sleepy contestants</a>
 		<a href="busyjudges" class="btn">Busy Judges</a>
 		<a href="toughcontests" class="btn">Tough contests</a>
-		<a href="copycats" class="btn">Copy cats</a>
-		<a href="" class="btn">Statistics</a>
+		<a href="copycatspage" class="btn">Copy cats</a>
+		<a href="stat" class="btn">Statistics</a>
 	</div>
 </body>
 </html>
