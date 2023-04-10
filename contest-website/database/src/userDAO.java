@@ -85,37 +85,7 @@ public class userDAO
         	connect.close();
         }
     }
-    
-//    public List<user> listAllUsers() throws SQLException {
-//        List<user> listUser = new ArrayList<user>();        
-//        String sql = "SELECT * FROM User";      
-//        connect_func();      
-//        statement = (Statement) connect.createStatement();
-//        ResultSet resultSet = statement.executeQuery(sql);
-//         
-//        while (resultSet.next()) {
-//            String email = resultSet.getString("email");
-//            String firstName = resultSet.getString("firstName");
-//            String lastName = resultSet.getString("lastName");
-//            String password = resultSet.getString("password");
-//            String birthday = resultSet.getString("birthday");
-//            String adress_street_num = resultSet.getString("adress_street_num"); 
-//            String adress_street = resultSet.getString("adress_street"); 
-//            String adress_city = resultSet.getString("adress_city"); 
-//            String adress_state = resultSet.getString("adress_state"); 
-//            String adress_zip_code = resultSet.getString("adress_zip_code"); 
-//            int cash_bal = resultSet.getInt("cash_bal");
-//            int PPS_bal = resultSet.getInt("PPS_bal");
-//
-//             
-//            user users = new user(email,firstName, lastName, password, birthday, adress_street_num,  adress_street,  adress_city,  adress_state,  adress_zip_code, cash_bal,PPS_bal);
-//            listUser.add(users);
-//        }        
-//        resultSet.close();
-//        disconnect();        
-//        return listUser;
-//    }
-    
+      
     public List<Judge> getJudgesContest(String contestID) throws SQLException {
     	List<Judge> judgesForContest = new ArrayList<Judge>();
     	
@@ -171,6 +141,88 @@ public class userDAO
     	}
     	
     	return Ys;
+    }
+    
+    public List<Object> getStatistics() throws SQLException {
+    	List<Object> stat = new ArrayList<Object>();
+    	
+    	String sql = " select * from \r\n"
+    			+ " (select count(*) as num_sponsors from sponsor) as t1,\r\n"
+    			+ " (select count(*) as num_judges from judge) as t2,\r\n"
+    			+ " (select count(*) as num_contests from contest) as t7,"
+    			+ " (select count(*) as num_contestants from contestant) t3,\r\n"
+    			+ " (select sum(sponsor_fee) as sum_sponsor_fee from contest where status = 'past') as t4,\r\n"
+    			+ " (select sum(judge_reward) as sum_judge_reward from judgeby) as t5,\r\n"
+    			+ " (select sum(contestant_reward) as sum_contestant_reward from participate) as t6  ;";
+    	connectFunc();
+    	
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	if (resultSet.next()) {
+    		int numSponsors = resultSet.getInt("num_sponsors");
+    		int numJudges = resultSet.getInt("num_judges");
+    		int numContestants = resultSet.getInt("num_contestants");
+    		int numContests = resultSet.getInt("num_contests");
+    		float sumSponsorFee = resultSet.getFloat("sum_judge_reward");
+    		float sumJudgeReward = resultSet.getFloat("sum_judge_reward");
+    		float sumContestantReward = resultSet.getFloat("sum_contestant_reward");
+    		stat.add(numSponsors);
+    		stat.add(numJudges);
+    		stat.add(numContestants);
+    		stat.add(numContests);
+    		stat.add(sumSponsorFee);
+    		stat.add(sumJudgeReward);
+    		stat.add(sumContestantReward);
+    	}
+    	
+    	return stat;
+    }
+    
+    public List<Judge> topJudges() throws SQLException {
+    	List<Judge> judges = new ArrayList<Judge>();
+    	
+    	String sql = "select * from judge \r\n"
+    			+ "group by judge_id \r\n"
+    			+ "having avg_score = (select max(avg_score) from judge as t1);";
+    	connectFunc();
+    	
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String loginID = resultSet.getString("login_id");
+    		System.out.println(loginID);
+    		float balance = resultSet.getFloat("reward_balance");
+    		float avg_score = resultSet.getFloat("avg_score");
+    		int review_num = resultSet.getInt("review_number");
+    		String password = resultSet.getString("password");
+    		String judgeID = resultSet.getString("judge_id");
+    		Judge judge = new Judge(judgeID, loginID, password, balance, avg_score, review_num);
+    		judges.add(judge);
+    	}
+    	
+    	return judges;
+    }
+    
+    public List<Contestant> bestContestants() throws SQLException {
+    	
+    	List<Contestant> contestants = new ArrayList<Contestant>();
+    	
+    	String sql = "select * from contestant\r\n"
+    			+ "group by contestant_id\r\n"
+    			+ "having reward_balance = (select max(reward_balance) from contestant as t1);";
+    	
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String contestant_id = resultSet.getString("contestant_id");
+    		String login_id = resultSet.getString("login_id");
+    		float reward_balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		Contestant contestant = new Contestant(contestant_id, login_id, reward_balance, password);
+    		contestants.add(contestant);
+    	}
+    	return contestants; 
     }
     
     public List<Contest> findToughContests() throws SQLException {
@@ -251,6 +303,86 @@ public class userDAO
     	return openContests;
     }
     
+    public List<Judge> busyJudges() throws SQLException {
+    	List<Judge> judges = new ArrayList<Judge>();
+    	
+    	String sql = "select * from judge where judge_id in ("
+    			+ "select judge.judge_id \r\n"
+    			+ "from judge \r\n"
+    			+ "join judgeby on judge.judge_id = judgeby.judge_id\r\n"
+    			+ "join contest on judgeby.contest_id = contest.contest_id and contest.status = \"past\"\r\n"
+    			+ "group by judge.judge_id\r\n"
+    			+ "having count(*) = (select count(*) from contest where status = \"past\"));";
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	Judge judge = new Judge();
+    	while (resultSet.next()) {
+    		String judgeID = resultSet.getString("judge_id");
+    		String loginID = resultSet.getString("login_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		float avg_score = resultSet.getFloat("avg_score");
+    		int review_num = resultSet.getInt("review_number");
+    		String password = resultSet.getString("password");
+    		judge = new Judge(judgeID, loginID, password, balance, avg_score, review_num);
+    		judges.add(judge);
+    	}
+    	return judges;
+    }
+    
+    public List<Contestant> sleepyContestants() throws SQLException {
+    	List<Contestant> contestants = new ArrayList<Contestant>();
+    	
+    	String sql = "select * from contestant where contestant_id not in(\r\n"
+    			+ "select distinct(contestant_id) from \r\n"
+    			+ "participate\r\n"
+    			+ ");";
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	while (resultSet.next()) {
+    		String contestant_id = resultSet.getString("contestant_id");
+    		String login_id = resultSet.getString("login_id");
+    		float reward_balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		Contestant contestant = new Contestant(contestant_id, login_id, reward_balance, password);
+    		contestants.add(contestant);
+    	}
+    	return contestants; 
+    }
+    
+    public List<Contest> commonContests(String contestant1, String contestant2) throws SQLException {
+    	String sql = "select c.* from (\r\n"
+    			+ "select contest_id from participate where contestant_id = (select contestant_id from contestant where login_id = '" + contestant1 + "') \r\n"
+    			+ "and contest_id in  \r\n"
+    			+ "(select contest_id from participate where contestant_id = (select contestant_id from contestant where login_id = '" + contestant2 + "')   )) as t1\r\n"
+    			+ "join \r\n"
+    			+ "contest c on c.contest_id = t1.contest_id; ";
+    	
+    	List<Contest> contests = new ArrayList<Contest>();
+    	
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	System.out.println("here");
+    	while (resultSet.next()) {
+    		
+    		String contest_id = resultSet.getString("contest_id");
+        	String sponsor_id = resultSet.getString("sponsor_id");
+        	String title = resultSet.getString("title");
+        	LocalDateTime begin_time = resultSet.getObject("begin_time", LocalDateTime.class);
+        	LocalDateTime end_time = resultSet.getObject("end_time", LocalDateTime.class);
+        	String status = resultSet.getString("status");
+        	String requirement_list = resultSet.getString("requirement_list");
+        	long sponsor_fee = resultSet.getLong("sponsor_fee");
+        	Contest contest = new Contest(contest_id, sponsor_id, title, begin_time, end_time, status, requirement_list, sponsor_fee); 
+        	System.out.println(title);
+        	contests.add(contest);
+    	}
+    	
+    	return contests;
+    }
+        
     public List<Contestant> rankContestants() throws SQLException{
     	List<Contestant> contestant_list = new ArrayList<Contestant>();
     	String sql = "select * from contestant order by reward_balance desc;";
@@ -300,7 +432,20 @@ public class userDAO
     	return resultSet;
     }
     
+    protected boolean updateAvgScore(String judgeID, int review_score) throws SQLException {
+    	String updateReviewNum = "update judge set avg_score = (avg_score * review_number  + "+ review_score +") / (review_number + 1), \r\n"
+    			+ "review_number = review_number + 1  \r\n"
+    			+ "where judge_id = " + judgeID + " ;";
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	boolean resultSet = statement.executeUpdate(updateReviewNum) > 0;
+    	return resultSet;
+    }
+    
     public boolean insertReview(String judgeID, String sponsorID, String review, int review_score) throws SQLException {
+    	if (!updateAvgScore(judgeID, review_score)) {
+    		System.out.print("Error in update avg score of judge");
+    	}
     	String sql = "Insert into review (judge_id, sponsor_id, comment, review_score) " 
     			+ "VALUE ( '" + judgeID + "', '" + sponsorID + "', '" + review + "', ' " + review_score +" ') " 
     			+ "ON DUPLICATE KEY UPDATE "
@@ -316,9 +461,9 @@ public class userDAO
     	
     	List<Object> review = new ArrayList<Object>();
     	
-    	String sql = "Select exists ("
+    	String sql = ""
     			+ "select * from review where judge_id = ' " + judgeID +"' and "
-    					+ "sponsor_id = '" + sponsorID + "');";
+    					+ "sponsor_id = '" + sponsorID + "';";
     	
     	connectFunc();
     	statement = (Statement) connect.createStatement();
@@ -333,6 +478,74 @@ public class userDAO
     	
     	return review;
     	
+    }
+    
+    public List<Contestant> getContestantsOneContest(String contestID) throws SQLException {
+    	String sql = "select t2.* from \r\n"
+    			+ "(\r\n"
+    			+ "(select * from participate where contest_id = '" + contestID + "') as t1\r\n"
+    			+ "\r\n"
+    			+ "join \r\n"
+    			+ "\r\n"
+    			+ "(select * from contestant) as t2 \r\n"
+    			+ "\r\n"
+    			+ "on t1.contestant_id = t2.contestant_id\r\n"
+    			+ ")";
+    	ArrayList<Contestant> contestants = new ArrayList<Contestant>();
+    	
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	
+    	while (resultSet.next()) {
+    		String contestantID = resultSet.getString("contestant_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		String loginID = resultSet.getString("login_id");
+    		Contestant contestant = new Contestant(contestantID, loginID, balance, password);
+    		contestants.add(contestant);
+    	}
+    	return contestants;
+    }
+    
+    public List<Review> getReviewOneJudge(String judgeID) throws SQLException {
+    	List<Review> reviews = new ArrayList<Review>();
+    	
+    	String sql = "select * from review where judge_id = '" + judgeID + "';";
+    	
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	
+    	while (resultSet.next()) {
+    		
+    		int score = resultSet.getInt("review_score");
+    		String comment = resultSet.getString("comment");
+    		Review review = new Review(score, comment);
+    		reviews.add(review);
+    	}
+    	
+    	
+    	return reviews;
+    }
+    
+    public List<Contestant> allContestants() throws SQLException {
+    	ArrayList<Contestant> contestants = new ArrayList<Contestant>();
+    	String sql = "select * from contestant order by reward_balance Desc;";
+    	
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	
+    	while (resultSet.next()) {
+    		String contestantID = resultSet.getString("contestant_id");
+    		float balance = resultSet.getFloat("reward_balance");
+    		String password = resultSet.getString("password");
+    		String loginID = resultSet.getString("login_id");
+    		Contestant contestant = new Contestant(contestantID, loginID, balance, password);
+    		contestants.add(contestant);
+    	}
+    	return contestants;
     }
     
     public Sponsor getSponsorbyID(String sponsor_ID) throws SQLException {
@@ -351,6 +564,22 @@ public class userDAO
 		long balance = resultSet.getLong("address");
 		Sponsor sponsor = new Sponsor(sponsor_id, login_id, company_name, email, address, password, balance);
 		return sponsor;
+    }
+    
+    public int numContest(String sponsorID) throws SQLException {
+    	String sql = "select count(*) as countContest from contest where sponsor_id = '" + sponsorID + "';";
+    	connectFunc();
+    	statement = (Statement) connect.createStatement();
+    	ResultSet resultSet = statement.executeQuery(sql);
+    	int numContest = 0;
+    	while (resultSet.next()) {
+    		
+    		String strNumContest = resultSet.getString("countContest");
+    		System.out.println(strNumContest);
+    		numContest = Integer.parseInt(strNumContest); 
+    	}
+    	System.out.println(numContest);
+    	return numContest;
     }
 
     
@@ -406,6 +635,8 @@ public class userDAO
     		String password = resultSet.getString("password");
     		long balance = resultSet.getLong("balance"); 
     		Sponsor sponsor = new Sponsor(sponsor_id, login_id, company_name, email, address, password, balance);
+    		int numContest = numContest(sponsor_id);
+    		sponsor.setNumContest(numContest);
     		bigSponsors.add(sponsor);
     	}        
 	    resultSet.close();
@@ -540,7 +771,7 @@ public class userDAO
     		contestant = new Contestant(contestantID, loginID, balance, password);
     		contestantLoginIDs.add(contestant);
     	}
-    	System.out.println(contestantLoginIDs.get(0).getId());
+//    	System.out.println(contestantLoginIDs.get(0).getId());
     	return contestantLoginIDs;
     }
     

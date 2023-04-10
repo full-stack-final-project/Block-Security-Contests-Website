@@ -61,10 +61,10 @@ public class ControlServlet extends HttpServlet {
         	case "/initialize":
         		userDAO.init();
         		System.out.println("Database successfully initialized!");
-        		rootPage(request,response,"");
+        		rootPage(request,response);
         		break;
         	case "/root":
-        		rootPage(request,response, "");
+        		rootPage(request,response);
         		break;
         	case "/logout":
         		logout(request,response);
@@ -132,7 +132,46 @@ public class ControlServlet extends HttpServlet {
         	case "/submitReview":
         		submitReview(request, response);
         		break;
-
+        	case "/leaderboard":
+        		leaderboard(request, response);
+        		break;
+        	case "/bigsponsors":
+        		bigSponsors(request, response);
+        		break;
+        	case "/topjudges":
+        		topJudges(request, response);
+        		break;
+        	case "/bestcontestants":
+        		bestContestants(request, response);
+        		break;
+        	case "/commoncontestantspage":
+        		commonContestantsPage(request, response);
+        		break;
+        	case "/commonContest":
+        		commonContest(request, response);
+        		break;
+        	case "/sleepycontestants":
+        		sleepyContestants(request, response);
+        		break;
+        	case "/busyjudges":
+        		busyJudges(request, response);
+        		break;
+        	case "/toughcontests":
+        		toughContests(request, response);
+        		break;
+        	case "/copycats":
+        		copycats(request, response);
+        		break;
+        	case "/copycatspage":
+        		copyCatsPage(request, response);
+        		break;
+        	case "/stat":
+        		stats(request, response);
+        		break;
+        	case "/judgeprofile":
+        		judgeprofile(request, response);
+        		break;
+        	
 	    	}
 	    }
 	    catch(Exception ex) {
@@ -140,9 +179,121 @@ public class ControlServlet extends HttpServlet {
 	    	}
 	    }
 	    	        
-	    private void rootPage(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException, SQLException{
-//	    	request.setAttribute("resStr","You just initialized the database. You can review the whole database through Workbench now");
-	   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
+	    private void rootPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	request.setAttribute("tips","You just initialized the database.");
+	   	 	request.getRequestDispatcher("rootReturn.jsp").forward(request, response);
+	    }
+	    
+	    protected void judgeprofile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String sponsorID = request.getParameter("sponsorID");
+	    	String judgeID = request.getParameter("JudgeID");
+	    	Judge judge = userDAO.getjudgeByID(judgeID);
+   		 	List<Contest> contests = userDAO.getContestsJudge(judgeID);
+   		 	List<Review> reviews = userDAO.getReviewOneJudge(judgeID);
+   		 	request.setAttribute("sponsorID", sponsorID);
+   		 	request.setAttribute("userID", judge.getLoginID());
+   		 	request.setAttribute("balance", judge.getRewardBalance());
+   		 	request.setAttribute("reviewScore", judge.getAvgScore());
+   		 	request.setAttribute("contests", contests);
+   		 	request.setAttribute("reviews", reviews);
+	   	 	request.getRequestDispatcher("sponsorJudgeIndex.jsp").forward(request, response);
+	    	
+	    }
+	    
+	    protected void stats(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Object> stat = userDAO.getStatistics();
+	    	request.setAttribute("numSponsors", stat.get(0));
+	    	request.setAttribute("numJudges", stat.get(1));
+	    	request.setAttribute("numContestants", stat.get(2));
+	    	request.setAttribute("numContests", stat.get(3));
+	    	request.setAttribute("sumSponsorFee", stat.get(4));
+	    	request.setAttribute("sumJudgeReward", stat.get(5));
+	    	request.setAttribute("sumContestantReward", stat.get(6));
+	    	request.getRequestDispatcher("sqlStat.jsp").forward(request, response);
+	    	
+	    }
+	    
+	    protected void copyCatsPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Contestant> contestants = userDAO.rankContestants();
+	    	request.setAttribute("contestants", contestants);
+	    	request.getRequestDispatcher("copyCatsPage.jsp").forward(request, response);
+	    	
+	    }
+	    
+	    protected void copycats(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestant1 = request.getParameter("contestant1");
+	    	List<Contestant> contestants = userDAO.findYs(contestant1);
+	    	request.setAttribute("contestants", contestants);
+	    	request.setAttribute("queryName", "Copy Cats for "+ contestant1);
+	    	request.getRequestDispatcher("sqlContestant.jsp").forward(request, response);
+	    }
+	    
+	    protected void toughContests(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Contest> contests = userDAO.findToughContests();
+	    	request.setAttribute("queryName", "Tough Contests");
+	    	request.setAttribute("contests", contests);
+	    	request.getRequestDispatcher("sqlContest.jsp").forward(request, response);
+	    }
+	    
+	    protected void busyJudges(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Judge> judges = userDAO.busyJudges();
+	    	request.setAttribute("queryName", "Busy Judges");
+	    	request.setAttribute("judges", judges);
+	    	request.getRequestDispatcher("sqlJudge.jsp").forward(request, response);
+	    }
+	    
+	    protected void sleepyContestants(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Contestant> contestants = userDAO.sleepyContestants();
+	    	request.setAttribute("queryName", "Sleepy Contestants");
+	    	request.setAttribute("contestants", contestants);
+	    	request.getRequestDispatcher("sqlContestant.jsp").forward(request, response);
+	    }
+	    
+	    protected void commonContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	String contestant1 = request.getParameter("contestant1");
+	    	String contestant2 = request.getParameter("contestant2");
+	    	List<Contest> contests = userDAO.commonContests(contestant1, contestant2);
+	    	request.setAttribute("queryName", "Common Contests for two selected contestants");
+	    	request.setAttribute("contests", contests);
+	    	request.getRequestDispatcher("sqlContest.jsp").forward(request, response);
+	    }
+	    
+	    protected void commonContestantsPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Contestant> contestants = userDAO.rankContestants();
+	    	request.setAttribute("contestants", contestants);
+	    	request.getRequestDispatcher("commonContestants.jsp").forward(request, response);
+	    	
+	    }
+	    
+	    protected void bestContestants(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List contestants = userDAO.bestContestants();
+	    	request.setAttribute("queryName", "Best Contestants");
+	    	request.setAttribute("contestants", contestants);
+	    	request.getRequestDispatcher("sqlContestant.jsp").forward(request, response);
+	    }
+	    
+	    protected void topJudges(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	List<Judge> judges = userDAO.topJudges();
+	    	request.setAttribute("queryName", "Top Judges");
+	    	request.setAttribute("judges", judges);
+	    	System.out.println(judges.get(0).getLoginID());
+	    	request.getRequestDispatcher("sqlJudge.jsp").forward(request, response);
+	    			
+	    }
+	    
+	    protected void bigSponsors(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+	    	List<Sponsor> sponsors = userDAO.listBigSponsors();
+	    	request.setAttribute("sponsors", sponsors);
+	    	request.setAttribute("queryName", "Big Sponsor(s)");
+	    	request.getRequestDispatcher("sqlSponsor.jsp").forward(request, response);
+	    }
+	    
+	    
+	    protected void leaderboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
+	    	List<Contestant> contestants = userDAO.allContestants();
+	  
+	    	request.setAttribute("contestants", contestants);
+	    	request.getRequestDispatcher("leaderboard.jsp").forward(request, response);
 	    }
 	    
 	    protected void reviewJudge(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
@@ -237,6 +388,8 @@ public class ControlServlet extends HttpServlet {
 	    	String judgeID = request.getParameter("judgeID");
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	List<Contestant> contestantList = userDAO.getContestantsJudge(contestID, judgeID);
+	    	List<Contestant> contestants = userDAO.getContestantsOneContest(contestID);
+	    	request.setAttribute("contestants", contestants);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
@@ -256,6 +409,8 @@ public class ControlServlet extends HttpServlet {
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	List<Judge> judges = userDAO.getJudgesContest(contestID);
 	    	String complete = userDAO.checkContestComplete(contestID);
+	    	List<Contestant> contestants = userDAO.getContestantsOneContest(contestID);
+	    	request.setAttribute("contestants", contestants);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
@@ -265,6 +420,7 @@ public class ControlServlet extends HttpServlet {
 	    	request.setAttribute("completed", complete);
 	    	request.setAttribute("status", contest.getStatus());
 	    	request.setAttribute("judgeList", judges);
+	    	
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestSponsor.jsp");
 	    	rd.forward(request, response);
 	    }
@@ -313,7 +469,7 @@ public class ControlServlet extends HttpServlet {
 	    	}
 	    	request.setAttribute("tips", returnContext);
 	    	request.setAttribute("sponsorID", judgeID);
-	    	RequestDispatcher rd = request.getRequestDispatcher("contestantReturn.jsp");
+	    	RequestDispatcher rd = request.getRequestDispatcher("judgeReturn.jsp");
 	    	rd.forward(request, response);
 	    }
 
@@ -341,6 +497,8 @@ public class ControlServlet extends HttpServlet {
 	    	String contestantID = request.getParameter("userID");
 	    	System.out.println(contestID);
 	    	Contest contest = userDAO.getContestbyID(contestID);
+	    	List<Contestant> contestants = userDAO.getContestantsOneContest(contestID);
+	    	request.setAttribute("contestants", contestants);
 	    	request.setAttribute("contestName", contest.getTitle());
 	    	request.setAttribute("beginTime", contest.getBeginTime());
 	    	request.setAttribute("endTime", contest.getEndTime());
@@ -401,7 +559,6 @@ public class ControlServlet extends HttpServlet {
 	    }
 	    
 	    
-	    
 	    protected void checkUserID(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	PrintWriter out = response.getWriter();
 	    	String outMessage = "";
@@ -419,6 +576,7 @@ public class ControlServlet extends HttpServlet {
 	    protected void sponsorIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 	    	String sponsor_id = request.getParameter("id");
 	    	List<Contest> contest_list = userDAO.sponsor_contests(sponsor_id);
+	    	
    		 	request.setAttribute("userID", sponsor_id);
    		 	request.setAttribute("contestList", contest_list);
 	   	 	request.getRequestDispatcher("sponsorIndex.jsp").forward(request, response);
@@ -439,9 +597,12 @@ public class ControlServlet extends HttpServlet {
 	    	String judgeID = request.getParameter("id");
 	    	Judge judge = userDAO.getjudgeByID(judgeID);
    		 	List<Contest> contests = userDAO.getContestsJudge(judgeID);
+   		 	List<Review> reviews = userDAO.getReviewOneJudge(judgeID);
    		 	request.setAttribute("walletAddress", judge.getId());
-   		 	request.setAttribute("balande", judge.getRewardBalance());
+   		 	request.setAttribute("balance", judge.getRewardBalance());
+   		 	request.setAttribute("reviewScore", judge.getAvgScore());
    		 	request.setAttribute("contests", contests);
+   		 	request.setAttribute("reviews", reviews);
 	   	 	request.getRequestDispatcher("judgeIndex.jsp").forward(request, response);
 	    }
 	    
@@ -452,7 +613,7 @@ public class ControlServlet extends HttpServlet {
 	    	 
 	    	 if (userID.equals("root") && password.equals("pass1234")) {
 //	    		 request.setAttribute("resStr","Logging in successfully as the root user");
-		   	 	 request.getRequestDispatcher("rootView.jsp").forward(request, response);
+		   	 	 request.getRequestDispatcher("newRoot.jsp").forward(request, response);
 	    	 }
 	    	 else if (role.equals("sponsor") && userDAO.isValid(userID, password, role)) {
 	    		 //request.setAttribute("resStr","Logging in successfully as the sponsor user");
@@ -480,12 +641,14 @@ public class ControlServlet extends HttpServlet {
 	    	 else if (role.equals("judge") && userDAO.isValid(userID, password, role)) {
 //	    		 request.setAttribute("resStr","Logging in successfully as the judge user");
 	    		 String judgeID = userDAO.getJudgeIDByLoginID(userID);
-	    		 Judge judge = userDAO.getjudgeByLoginID(userID);
-	    		 List<Contest> contests = userDAO.getContestsJudge(judgeID);
-	    		 request.setAttribute("walletAddress", judge.getId());
-	    		 request.setAttribute("balande", judge.getRewardBalance());
-	    		 request.setAttribute("contests", contests);
-		   	 	 request.getRequestDispatcher("judgeIndex.jsp").forward(request, response);
+//	    		 Judge judge = userDAO.getjudgeByLoginID(userID);
+//	    		 List<Contest> contests = userDAO.getContestsJudge(judgeID);
+//	    		 request.setAttribute("walletAddress", judge.getId());
+//	    		 System.out.println(judge.getRewardBalance());
+//	    		 request.setAttribute("balance", judge.getRewardBalance());
+//	    		 request.setAttribute("contests", contests);
+	    		 response.sendRedirect("judgeIndex?id=" + judgeID);
+//		   	 	 request.getRequestDispatcher("judgeIndex.jsp").forward(request, response);
 	    		 
 	    	 }
 	    	 else {
