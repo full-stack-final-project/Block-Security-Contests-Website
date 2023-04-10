@@ -42,6 +42,7 @@
     <h1>Welcome to Yihua and Junhao Block Security Contents Website</h1>
     <a href="mylogin.jsp">Login</a>
     <a href="signuppage.jsp">Sign Up</a>
+    <a href="leaderboard">Leaderboard</a>
   </div>
 </body>
 </html>

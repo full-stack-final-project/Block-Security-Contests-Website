@@ -5,7 +5,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Judge Index</title>
+	<title>Judge Profile</title>
 	<style>
 		/* CSS styles */
 		body {
@@ -59,12 +59,26 @@
 			background-color: #286090;
 			border-color: #204d74;
 		}
+		 .btn {
+		background-color: #4CAF50;
+		color: white;
+		padding: 10px 20px;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+
+	.btn:hover {
+		background-color: #3e8e41;
+		}
 	</style>
 </head>
 <body>
 	<div class="container">
-		<h1>Judge Index</h1>
-		<p>Wallet Address: ${ walletAddress }</p>
+		<h1>Judge Profile</h1>
+		<a href="leaderboard" class="btn">Leader Board</a>
+		<a href="sponsorIndex?id=${sponsorID}" class="btn">Back to the Sponsor Index.</a>
+		<p>Login ID: ${userID} </p>
 		<p>Balance: ${ balance }</p>
 		<p>Avg Review Score: ${reviewScore}</p>
 		<table>
@@ -74,7 +88,7 @@
 					<th>Begin time</th>
 					<th>End time</th>
 					<th>Status</th>
-					<th>Score</th>
+					
 				</tr>
 			</thead>
 			<tbody>
@@ -85,16 +99,12 @@
 						<td>${ contest.getBeginTime()}</td>
 						<td>${ contest.getEndTime()}</td>
 						<td>${contest.getStatus() }</td>
-						<c:if test="${contest.status == 'closed'}">
-						<td><a href="contestDetailsJudge?id=${contest.getContestID()}&judgeID=${walletAddress}"}">Score</a></td>
-						</c:if>
-
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
 		
-		 <h2>Reviews for you:</h2>
+		 <h2>Reviews for this judge:</h2>
 		<table>
 			<thead>
 				<tr>

@@ -16,6 +16,7 @@ public class Judge extends User{
     	this.reward_balance = reward_balance;
     	this.avg_score = avg_score;
         this.review_number = review_number;
+        this.login_id = login_id;
     }
     
    //getter and setter methods
