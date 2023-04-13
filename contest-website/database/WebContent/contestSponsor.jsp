@@ -120,7 +120,7 @@
         	
         </c:if>
         
-        <c:if test="${completed == 'True'}">
+        <c:if test="${completed == 'true'}">
         <a href="distributeBonus?id=${contestID}&sponsorID=${userID}">Distribute bonus</a>
         </c:if>
         

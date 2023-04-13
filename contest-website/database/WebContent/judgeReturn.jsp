@@ -92,7 +92,7 @@
 	<div class="container">
 		<h3>${tips}</h1>
 		<div class="form-field">
-			<a href="JudgeIndex?id=${judgeID}" class="btn">Back to the Judge Index.</a>
+			<a href="judgeIndex?id=${judgeID}" class="btn">Back to the Judge Index.</a>
 			<a href="index.jsp" class="btn">Log out</a>
 		</div>
 	</div>

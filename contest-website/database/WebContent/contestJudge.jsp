@@ -140,7 +140,7 @@
 				<c:forEach var="contestant" items="${contestantList}">
 					<tr>
 						<td>${contestant.getLoginID()}</a></td>
-						<td><a href="score?id=${contestID}&judgeId=${userID}&contestantID=${contestant.getId()}">Score</a></td>
+						<td><a href="score?id=${contestID}&judgeID=${userID}&contestantID=${contestant.getId()}">Score</a></td>
 					</tr>
 				</c:forEach>
 			</tbody>

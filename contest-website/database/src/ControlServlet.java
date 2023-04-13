@@ -320,7 +320,7 @@ public class ControlServlet extends HttpServlet {
 	    	String scoreStr = request.getParameter("score");
 	    	int score = Integer.parseInt(scoreStr);
 	    	if (userDAO.insertReview(judgeID, sponsorID, comment, score)) {
-	    		response.sendRedirect("/sponsorReturn?tips=s3&sponsorID="+sponsorID);
+	    		response.sendRedirect("sponsorReturn?tips=s3&sponsorID="+sponsorID);
 	    	}
 	    	
 	    }
@@ -351,7 +351,7 @@ public class ControlServlet extends HttpServlet {
 //	    	if (userDAO.updateGrade(contestID, contestantID, score)) {
 //	    		System.out.println("Updated the grade.");
 //	    	}
-	    	response.sendRedirect("/judgeReturn?tips=s1&judgeID="+judgeID);
+	    	response.sendRedirect("judgeReturn?tips=s1&judgeID="+judgeID);
 	    }
 
 	    protected void submitContest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException{
@@ -366,7 +366,7 @@ public class ControlServlet extends HttpServlet {
 //	    		 request.setAttribute("contests", contests);
 //	    		 
 //	    		 request.getRequestDispatcher("contestantIndex.jsp").forward(request, response);
-	    		response.sendRedirect("/contestantReturn?tips=s1&contestantID="+contestantID);
+	    		response.sendRedirect("contestantReturn?tips=s1&contestantID="+contestantID);
 	    	}
 	    }
 	    
@@ -430,14 +430,17 @@ public class ControlServlet extends HttpServlet {
 	    	String returnContext = "";
 	    	String sponsorID = request.getParameter("sponsorID");
 	    	if (returnContextCode.equals("s1")){
-	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants!";
+	    		returnContext = "Sucessfully distibuted submissions to judges!";
 	    		
 	    	}
 	    	else if (returnContextCode.equals("s2")) {
 	    		returnContext = "Sucessfully distibuted Rewards to judges and contestants!";
 	    	}
-	    	else if (returnContextCode.equals("s2")) {
+	    	else if (returnContextCode.equals("s3")) {
 	    		returnContext = "Sucessfully Reviewed!";
+	    	}
+	    	else if (returnContextCode.equals("s4")) {
+	    		returnContext = "Successfully created a contest.";
 	    	}
 	    	request.setAttribute("tips", returnContext);
 	    	request.setAttribute("sponsorID", sponsorID);
@@ -455,7 +458,7 @@ public class ControlServlet extends HttpServlet {
 	    	}
 	    	
 	    	request.setAttribute("tips", returnContext);
-	    	request.setAttribute("sponsorID", contestantID);
+	    	request.setAttribute("contestantID", contestantID);
 	    	RequestDispatcher rd = request.getRequestDispatcher("contestantReturn.jsp");
 	    	rd.forward(request, response);
 	    }
@@ -468,7 +471,7 @@ public class ControlServlet extends HttpServlet {
 	    		returnContext = "Successfully sumbitted the score!";
 	    	}
 	    	request.setAttribute("tips", returnContext);
-	    	request.setAttribute("sponsorID", judgeID);
+	    	request.setAttribute("judgeID", judgeID);
 	    	RequestDispatcher rd = request.getRequestDispatcher("judgeReturn.jsp");
 	    	rd.forward(request, response);
 	    }
@@ -478,7 +481,7 @@ public class ControlServlet extends HttpServlet {
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
 	    	userDAO.assignSubmissionsToJudges(contest);
-	    	response.sendRedirect("/sponsorReturn?tips=s1&sponsorID="+sponsorID);
+	    	response.sendRedirect("sponsorReturn?tips=s1&sponsorID="+sponsorID);
 	    }
 	    
 	    
@@ -486,9 +489,10 @@ public class ControlServlet extends HttpServlet {
 	    	String sponsorID = request.getParameter("sponsorID");
 	    	String contestID = request.getParameter("id");
 	    	Contest contest = userDAO.getContestbyID(contestID);
-	    	userDAO.distributedRewardsToJudges(contest);
-	    	userDAO.distributedRewardsToContestants(contest);
-	    	response.sendRedirect("/sponsorReturn?tips=s2&sponsorID="+sponsorID);
+	    	userDAO.distributeContestRewards(contest);
+//	    	userDAO.distributedRewardsToJudges(contest);
+//	    	userDAO.distributedRewardsToContestants(contest);
+	    	response.sendRedirect("sponsorReturn?tips=s2&sponsorID="+sponsorID);
 //	    	sponsorReturn(request, response, "Sucessfully distibuted Rewards to judges and contestants", sponsorID);
 	    }
 
@@ -551,9 +555,10 @@ public class ControlServlet extends HttpServlet {
 	    	userDAO.insertJudgeby(contest, selectJudges);
 	    	
 	    	 List<Contest> contest_list = userDAO.sponsor_contests(sponsor_id);
-   		 	request.setAttribute("userID", sponsor_id);
-   		 	request.setAttribute("contestList", contest_list);
-	   	 	request.getRequestDispatcher("sponsorIndex.jsp").forward(request, response);
+//   		 	request.setAttribute("userID", sponsor_id);
+//   		 	request.setAttribute("contestList", contest_list);
+//	   	 	request.getRequestDispatcher("sponsorIndex.jsp").forward(request, response);
+	   	 response.sendRedirect("sponsorReturn?tips=s4&sponsorID="+sponsor_id);
 	    	
 	    		    	
 	    }

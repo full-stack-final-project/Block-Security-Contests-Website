@@ -116,7 +116,7 @@
 					<th>Number of contests</th>
 					<th>Number of sponsor fees</th>
 					<th>Number of judges rewards</th>
-					<th>Number of judges contestants</th> 
+					<th>Number of contestants rewards</th> 
 				</tr>
 			</thead>
 			<tbody>

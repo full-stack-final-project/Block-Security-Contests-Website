@@ -119,25 +119,36 @@ public class userDAO
     	
     	List<Contestant> Ys = new ArrayList<Contestant>();
     	
-    	String sql = "Select c2.*\r\n"
-    			+ "from participate pp1\r\n"
-    			+ "join participate pp2 on pp1.contest_id = pp2.contest_id and pp1.contestant_id <> pp2.contestant_id\r\n"
-    			+ "join contestant c1 on c1.contestant_id = pp1.contestant_id and c1.contestant_id = '" + contestant.id + "'\r\n"
-    			+ "join contestant c2 on pp2.contestant_id = c2.contestant_id\r\n"
-    			+ "group by pp2.contestant_id\r\n"
-    			+ "having count(*) = (select count(*) from participate p1 where p1.contestant_id = '" + contestant.id + "');";
+//    	String sql = "Select c2.*\r\n"
+//    			+ "from participate pp1\r\n"
+//    			+ "join participate pp2 on pp1.contest_id = pp2.contest_id and pp1.contestant_id <> pp2.contestant_id\r\n"
+//    			+ "join contestant c1 on c1.contestant_id = pp1.contestant_id and c1.contestant_id = '" + contestant.getId() + "'\r\n"
+//    			+ "join contestant c2 on pp2.contestant_id = c2.contestant_id\r\n"
+//    			+ "group by pp2.contestant_id\r\n"
+//    			+ "having count(*) = (select count(*) from participate p1 where p1.contestant_id = '" + contestant.getId() + "');";
+    	
+    	String sql = "create or replace view temp1 as SELECT distinct p2.contestant_id from participate p1 join participate p2\r\n"
+    			+ "on p1.contestant_id = '"  + contestant.getId() +  "' and p1.contest_id = p2.contest_id and p1.contestant_id <> p2.contestant_id;\r\n";
+    	String sql2 = "create or replace view temp2 as select count(*) as numbers, contestant_id from participate group by contestant_id; ";
+    	String sql3 = "create or replace view temp3 as select count(*) as expect_number from participate where contestant_id = (select contestant_id from contestant where contestant_id = '"  + contestant.getId() +  "');";
+    	String query = "select distinct temp1.contestant_id\r\n"
+    			+ "from temp1 join temp2  join temp3\r\n"
+    			+ "on temp1.contestant_id  = temp2.contestant_id and temp2.numbers = temp3.expect_number;";
+    	
     	
     	connectFunc();
     	
     	statement = (Statement) connect.createStatement();
-    	ResultSet resultSet = statement.executeQuery(sql);
+    	statement.executeUpdate(sql);
+    	statement.executeUpdate(sql2);
+    	statement.executeUpdate(sql3);
+    	ResultSet resultSet = statement.executeQuery(query);
+    	
     	while (resultSet.next()) {
+    		
     		String contestantID = resultSet.getString("contestant_id");
-    		String loginID = resultSet.getString("login_id");
-    		float balance = resultSet.getFloat("reward_balance");
-    		String password = resultSet.getString("password");
-    		contestant = new Contestant(contestantID, loginID, balance, password);
-    		Ys.add(contestant);
+    		Contestant c = getContestantByID(contestantID);
+    		Ys.add(c);
     	}
     	
     	return Ys;
@@ -433,9 +444,14 @@ public class userDAO
     }
     
     protected boolean updateAvgScore(String judgeID, int review_score) throws SQLException {
-    	String updateReviewNum = "update judge set avg_score = (avg_score * review_number  + "+ review_score +") / (review_number + 1), \r\n"
-    			+ "review_number = review_number + 1  \r\n"
-    			+ "where judge_id = " + judgeID + " ;";
+    	Judge judge = getjudgeByID(judgeID);
+    	int review_number = judge.getReviewNumber();
+    	float avg_score = judge.getAvgScore();
+    	int new_review_number = review_number + 1;
+    	float new_avg_score = (avg_score * review_number + review_score) / new_review_number;
+    	System.out.printf("%d %d %f %f", review_number, new_review_number, avg_score, new_avg_score);
+    	String updateReviewNum = "update judge set avg_score = "+ new_avg_score +", review_number = " + new_review_number
+    			+ " where judge_id = '" + judgeID + "';";
     	connectFunc();
     	statement = (Statement) connect.createStatement();
     	boolean resultSet = statement.executeUpdate(updateReviewNum) > 0;
@@ -444,12 +460,12 @@ public class userDAO
     
     public boolean insertReview(String judgeID, String sponsorID, String review, int review_score) throws SQLException {
     	if (!updateAvgScore(judgeID, review_score)) {
-    		System.out.print("Error in update avg score of judge");
+    		System.out.print("Error in update avg score of judge.\n");
     	}
     	String sql = "Insert into review (judge_id, sponsor_id, comment, review_score) " 
     			+ "VALUE ( '" + judgeID + "', '" + sponsorID + "', '" + review + "', ' " + review_score +" ') " 
     			+ "ON DUPLICATE KEY UPDATE "
-    			+ "review = '"+ review + "', review_score = '" + review_score + "';";
+    			+ "comment = '"+ review + "', review_score = '" + review_score + "';";
     	System.out.println(sql);
     	connectFunc();
     	statement = (Statement) connect.createStatement();
@@ -960,7 +976,7 @@ public class userDAO
     	distributedRewardsToContestants(contest);
     	String updateStatus = "Update contest set status = 'past' where contest_id = '" + contest.getContestID() + "';";
     	statement = (Statement) connect.createStatement();
-    	statement.executeQuery(updateStatus);
+    	ResultSet resultSet = statement.executeQuery(updateStatus);
     }
     
     
@@ -1074,19 +1090,7 @@ public class userDAO
 		String sql = "insert into " + role + "(" + role + "_id, password) values (?, ?)";
 		preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
 		preparedStatement.setString(1, users.getId());
-		preparedStatement.setString(2, users.getPassword());
-//			preparedStatement.setString(1, users.getEmail());
-//			preparedStatement.setString(2, users.getFirstName());
-//			preparedStatement.setString(3, users.getLastName());
-//			preparedStatement.setString(4, users.getPassword());
-//			preparedStatement.setString(5, users.getBirthday());
-//			preparedStatement.setString(6, users.getAdress_street_num());		
-//			preparedStatement.setString(7, users.getAdress_street());		
-//			preparedStatement.setString(8, users.getAdress_city());		
-//			preparedStatement.setString(9, users.getAdress_state());		
-//			preparedStatement.setString(10, users.getAdress_zip_code());		
-//			preparedStatement.setInt(11, users.getCash_bal());		
-//			preparedStatement.setInt(12, users.getPPS_bal());		
+		preparedStatement.setString(2, users.getPassword());		
 
 		preparedStatement.executeUpdate();
         preparedStatement.close();
@@ -1104,60 +1108,6 @@ public class userDAO
         return rowDeleted;     
     }
      
-//    public boolean update(user users) throws SQLException {
-//        String sql = "update User set firstName=?, lastName =?,password = ?,birthday=?,adress_street_num =?, adress_street=?,adress_city=?,adress_state=?,adress_zip_code=?, cash_bal=?, PPS_bal =? where email = ?";
-//        connect_func();
-//        
-//        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-//        preparedStatement.setString(1, users.getEmail());
-//		preparedStatement.setString(2, users.getFirstName());
-//		preparedStatement.setString(3, users.getLastName());
-//		preparedStatement.setString(4, users.getPassword());
-//		preparedStatement.setString(5, users.getBirthday());
-//		preparedStatement.setString(6, users.getAdress_street_num());		
-//		preparedStatement.setString(7, users.getAdress_street());		
-//		preparedStatement.setString(8, users.getAdress_city());		
-//		preparedStatement.setString(9, users.getAdress_state());		
-//		preparedStatement.setString(10, users.getAdress_zip_code());		
-//		preparedStatement.setInt(11, users.getCash_bal());		
-//		preparedStatement.setInt(12, users.getPPS_bal());
-//         
-//        boolean rowUpdated = preparedStatement.executeUpdate() > 0;
-//        preparedStatement.close();
-//        return rowUpdated;     
-//    }
-//    
-//    public user getUser(String email) throws SQLException {
-//    	user user = null;
-//        String sql = "SELECT * FROM User WHERE email = ?";
-//         
-//        connect_func();
-//         
-//        preparedStatement = (PreparedStatement) connect.prepareStatement(sql);
-//        preparedStatement.setString(1, email);
-//         
-//        ResultSet resultSet = preparedStatement.executeQuery();
-//         
-//        if (resultSet.next()) {
-//            String firstName = resultSet.getString("firstName");
-//            String lastName = resultSet.getString("lastName");
-//            String password = resultSet.getString("password");
-//            String birthday = resultSet.getString("birthday");
-//            String adress_street_num = resultSet.getString("adress_street_num"); 
-//            String adress_street = resultSet.getString("adress_street"); 
-//            String adress_city = resultSet.getString("adress_city"); 
-//            String adress_state = resultSet.getString("adress_state"); 
-//            String adress_zip_code = resultSet.getString("adress_zip_code"); 
-//            int cash_bal = resultSet.getInt("cash_bal");
-//            int PPS_bal = resultSet.getInt("PPS_bal");
-//            user = new user(email, firstName, lastName, password, birthday, adress_street_num,  adress_street,  adress_city,  adress_state,  adress_zip_code,cash_bal,PPS_bal);
-//        }
-//         
-//        resultSet.close();
-//        statement.close();
-//         
-//        return user;
-//    }
     public boolean checkWalletAddress(String wallet_address, String role) throws SQLException {
     	boolean checks = true;
     	String sql = "SELECT * From " + role + "  WHERE " +  role + "_id = ?";
@@ -1362,9 +1312,9 @@ public class userDAO
     			    			"('0x360F3E8F837793A7E8F205EC58A3E0ADDE5C66AE', 'Q49zwPCC', 'Johnson, Morse and Chandler ', 'david97@example.com','New Christopher, DE 18612', '0000', '1000000');"),
         		
         		("insert into contest(contest_id, sponsor_id, begin_time, end_time, title, status, requirement_list, sponsor_fee) "+
-            			"values ('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2','2023-03-08 23:11:23', '2023-03-28 19:01:46', 'contest_1', 'opened', 'Executive serious challenge question. Instead money court city learn where. Common always key analysis show ball.', '10000'),"+
-    			    		 	"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '2023-03-09 14:25:39', '2023-03-10 18:32:53', 'contest_2', 'opened', 'Close success class down. Which medical he tree social American.', '10000'),"+
-    			    			"('0x45D4F7663EEE2246299620F1B6D69EB8C1675635', '0xAE68D751D3F446DE82E721D710A39699D75ED4E6', '2023-03-19 23:24:54', '2023-04-01 03:00:23', 'contest_3', 'created',  'Building make be we mother. Mission now clearly but according Mr wait.', '10000');"),
+            			"values ('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2','2023-03-08 23:11:23', '2023-04-14 19:01:46', 'contest_1', 'opened', 'Executive serious challenge question. Instead money court city learn where. Common always key analysis show ball.', '10000'),"+
+    			    		 	"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '2023-03-09 14:25:39', '2023-04-16 18:32:53', 'contest_2', 'opened', 'Close success class down. Which medical he tree social American.', '10000'),"+
+    			    			"('0x45D4F7663EEE2246299620F1B6D69EB8C1675635', '0xAE68D751D3F446DE82E721D710A39699D75ED4E6', '2023-03-19 23:24:54', '2023-05-01 03:00:23', 'contest_3', 'opened',  'Building make be we mother. Mission now clearly but according Mr wait.', '10000');"),
         		
         		("insert into contestant(contestant_id, login_id, password) "+
             			"values ('0xFFA48B515340C430BA8BD38E739715449A9A98C2', 'DJA8', '1122'),"+
@@ -1400,42 +1350,7 @@ public class userDAO
     			    			"('0x803B1734224C73B9FFC5F08B5EF197695F002EF1', '0x498FAD17F26E914F1A034D960B724A3C05A54DD8'),"+
     			    			"('0x3CFBCB6D1980E895BFE47C09677A2D6D130CC7F4', '0x498FAD17F26E914F1A034D960B724A3C05A54DD8'),"+
     			    			"('0x3F3568E46909FB7AAE17B1C31F7D2F334CF1C6E5', '0x498FAD17F26E914F1A034D960B724A3C05A54DD8'),"+
-    			    			"('0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', '0x498FAD17F26E914F1A034D960B724A3C05A54DD8');"),
-        		
-        		("insert into grade(contest_id, contestant_id, judge_id) "+
-            			"values ('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0xFFA48B515340C430BA8BD38E739715449A9A98C2', '0x7028B6789BBEE245564032790282FD27B8042476'),"+
-    			    		 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x35A85E2BAD55C300CE6275B15CAB8CA31D84C599', '0x4967CFB5FC27C098230CFE8B8985234D91D52886'),"+
-    			    	 	 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0xFCD3B620543DD7F60E242DF58682B868E85736AD', '0xA115319467FB68EDD5DA513152B1158A2EF14CBF'),"+
-    			    		 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x680ABFEC8CB5FA2DAEC5C1390B5A215107A4B395', '0xA542FE379E6E11749D19F1AB9514E0202D6E64AC'),"+
-    			    		 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x07C753B5DC16CF9A08C0FB9E1ED2DF7BFF8D2183', '0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB'),"+
-    			    		 	"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x2E1F392C012084AFEE3488950F3EDB976BA58E24', '0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x803B1734224C73B9FFC5F08B5EF197695F002EF1', '0x987263D76E9C6674D9330A3B6F1A3E6FB4801691'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x3CFBCB6D1980E895BFE47C09677A2D6D130CC7F4', '0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x3F3568E46909FB7AAE17B1C31F7D2F334CF1C6E5', '0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', '0x307431DB1BAE5134190DA6352D0D294FA69ECEC4');"),
-        		
-        		("insert into judgeby(contest_id, judge_id) "+
-            			"values ('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x7028B6789BBEE245564032790282FD27B8042476'),"+
-    			    		 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x4967CFB5FC27C098230CFE8B8985234D91D52886'),"+
-    			    	 	 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0xA115319467FB68EDD5DA513152B1158A2EF14CBF'),"+
-    			    		 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0xA542FE379E6E11749D19F1AB9514E0202D6E64AC'),"+
-    			    		 	"('0x49A1E288EFF45984CEC8409406053B9B9A5500DA', '0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB'),"+
-    			    		 	"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x987263D76E9C6674D9330A3B6F1A3E6FB4801691'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83'),"+
-    			    			"('0x498FAD17F26E914F1A034D960B724A3C05A54DD8', '0x307431DB1BAE5134190DA6352D0D294FA69ECEC4');")};
-//        		("insert into review(judge_id, sponsor_id, review_score, comment) "+
-//            			"values ('0x7028B6789BBEE245564032790282FD27B8042476', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2', '8', 'Those well check partner.'),"+
-//    			    		 	"('0x4967CFB5FC27C098230CFE8B8985234D91D52886', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2', '8', 'Inside along PM own break. Play sit good able.'),"+
-//    			    	 	 	"('0xA115319467FB68EDD5DA513152B1158A2EF14CBF', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2', '8', 'Full teacher why perhaps question.'),"+
-//    			    		 	"('0xA542FE379E6E11749D19F1AB9514E0202D6E64AC', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2', '8', 'receive theory. President shoulder there history bad rest threat.'),"+
-//    			    		 	"('0x85C797CAF9D2FEDBA5C49AF91F4FEAB7366EA6AB', '0x97947962D8E41604A639E45CF53ABF7D8908F3D2', '8', 'Rock then think natural inside represent current long.'),"+
-//    			    		 	"('0x239BFD2748D6D220AF5B93E88F44A9C4FCC36F3C', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '8', 'Talk enjoy weight form. Threat half money our wide. Nice during nor fill wait.'),"+
-//    			    			"('0x987263D76E9C6674D9330A3B6F1A3E6FB4801691', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '8', 'Sing product memory. Social foreign treatment actually. Piece cut left else feeling environment.'),"+
-//    			    			"('0xBDCE1E9D1D7A2DF132C54B1F15A1AF386DF95EE8', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '8', 'Similar together simply able. Image loss friend own father happy response door.'),"+
-//    			    			"('0x28B62CECE61DF2E4656A66DE2929E02DA90B8E83', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '8', 'Use anything teacher instead low trial else. Report north beat like.'),"+
-//    			    			"('0x307431DB1BAE5134190DA6352D0D294FA69ECEC4', '0xB2A8F45FEC88A1825EB1ABA35F82C2A03A4C840A', '8', 'Inside along PM own break. Play sit good able.');")
+    			    			"('0xB7E05DE3DCB4D73810F4F8A25DB1D32A900D89A0', '0x498FAD17F26E914F1A034D960B724A3C05A54DD8');")};
 			    			
         String[] EVENT = {
         		("CREATE DEFINER=`john`@`%` PROCEDURE `contest_start_status`()\r\n"
